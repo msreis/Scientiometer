@@ -197,13 +197,13 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `scientiometer`.`productivity_scholarships`
+-- Table `scientiometer`.`productivity_scholarship`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scientiometer`.`productivity_scholarships` (
+CREATE TABLE IF NOT EXISTS `scientiometer`.`productivity_scholarship` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `cnpq_level_id` INT NULL,
-  `validity_start` DATE NOT NULL,
-  `validity_end` DATE NULL,
+  `validity_start` YEAR(4) NOT NULL,
+  `validity_end` YEAR(4) NULL,
   `granted_researcher_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_productivity_scholarships_cnpq_level1_idx` (`cnpq_level_id` ASC) VISIBLE,
