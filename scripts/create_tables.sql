@@ -19,8 +19,9 @@ USE `scientiometer` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`role_foundation_or_pq_level` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `role_name_or_pq_level` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  `role_name_or_pq_level` VARCHAR(75) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `role_name_or_pq_level_UNIQUE` (`role_name_or_pq_level` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -30,7 +31,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`title` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `title_UNIQUE` (`title` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -40,7 +42,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`lab_division` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `division_name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `division_name_UNIQUE` (`division_name` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -53,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`laboratory` (
   `lab_division_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_laboratory_lab_division1_idx` (`lab_division_id` ASC) VISIBLE,
+  UNIQUE INDEX `laboratory_name_UNIQUE` (`laboratory_name` ASC) VISIBLE,
   CONSTRAINT `fk_laboratory_lab_division1`
     FOREIGN KEY (`lab_division_id`)
     REFERENCES `scientiometer`.`lab_division` (`id`)
@@ -99,7 +103,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`post_doctoral_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `type` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `type_UNIQUE` (`type` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -111,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`researcher` (
   `post_doctoral_type_id` INT NOT NULL,
   `researcher_id` VARCHAR(9) NOT NULL,
   `orcid` VARCHAR(16) NOT NULL,
-  `ingress_year` YEAR(4) NOT NULL,
+  `ingress_date` DATE NOT NULL,
   `email` VARCHAR(60) NOT NULL,
   `lab_director` TINYINT NOT NULL,
   UNIQUE INDEX `researcher_id_UNIQUE` (`researcher_id` ASC) VISIBLE,
@@ -128,7 +133,8 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`researcher` (
     REFERENCES `scientiometer`.`post_doctoral_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+PACK_KEYS = DEFAULT;
 
 
 -- -----------------------------------------------------
@@ -137,7 +143,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`internship_level` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `level` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `level_UNIQUE` (`level` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -146,9 +153,19 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`intern` (
   `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL,
+  `researcher_employee_id` INT NOT NULL,
   `internship_level_id` INT NOT NULL,
+  `validity_start` YEAR(4) NOT NULL,
+  `validity_end` YEAR(4) NULL,
   PRIMARY KEY (`id`),
+  INDEX `fk_intern_researcher1_idx` (`researcher_employee_id` ASC) VISIBLE,
   INDEX `fk_intern_internship_level1_idx` (`internship_level_id` ASC) VISIBLE,
+  CONSTRAINT `fk_intern_researcher1`
+    FOREIGN KEY (`researcher_employee_id`)
+    REFERENCES `scientiometer`.`researcher` (`employee_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
   CONSTRAINT `fk_intern_internship_level1`
     FOREIGN KEY (`internship_level_id`)
     REFERENCES `scientiometer`.`internship_level` (`id`)
@@ -163,7 +180,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`scholarship_agency` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `agency` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `agency_UNIQUE` (`agency` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -173,7 +191,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`cnpq_level` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `cnpq_level` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `cnpq_level_UNIQUE` (`cnpq_level` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -182,7 +201,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`productivity_scholarships` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `cnpq_level_id` INT NOT NULL,
+  `cnpq_level_id` INT NULL,
   `validity_start` DATE NOT NULL,
   `validity_end` DATE NULL,
   `granted_researcher_id` INT NOT NULL,
@@ -211,6 +230,7 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`article_production` (
   `n_total_publications` INT NOT NULL,
   `n_intl_colab` INT NOT NULL,
   `n_first_author` INT NOT NULL,
+  `n_corresponding_author` INT NOT NULL,
   `n_last_author` INT NOT NULL,
   `year` YEAR(4) NOT NULL,
   PRIMARY KEY (`id`),
@@ -258,7 +278,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`line_of_research` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `line_of_research` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `line_of_research_UNIQUE` (`line_of_research` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -314,7 +335,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`participation_role` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `role_description` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `role_description_UNIQUE` (`role_description` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -354,7 +376,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`institution` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `institution_name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `institution_name_UNIQUE` (`institution_name` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -364,7 +387,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`supervision_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `type_description` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `type_description_UNIQUE` (`type_description` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -406,7 +430,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`postgraduate_program` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `program_name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `program_name_UNIQUE` (`program_name` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -416,7 +441,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`postgraduate_level` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `level` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `level_UNIQUE` (`level` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -427,10 +453,12 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`postgraduate_program_supervision` (
   `researcher_employee_id` INT NOT NULL AUTO_INCREMENT,
   `postgraduate_level_id` INT NOT NULL,
   `postgraduate_program_id` INT NOT NULL,
+  `institution_id` INT NOT NULL,
   `year` YEAR(4) NOT NULL,
   PRIMARY KEY (`researcher_employee_id`, `postgraduate_level_id`, `postgraduate_program_id`),
   INDEX `fk_postgraduate_accreditation_postgraduate_level1_idx` (`postgraduate_level_id` ASC) VISIBLE,
   INDEX `fk_postgraduate_accreditation_post_graduate_program1_idx` (`postgraduate_program_id` ASC) VISIBLE,
+  INDEX `fk_postgraduate_program_supervision_institution1_idx` (`institution_id` ASC) VISIBLE,
   CONSTRAINT `fk_postgraduate_accreditation_researcher1`
     FOREIGN KEY (`researcher_employee_id`)
     REFERENCES `scientiometer`.`researcher` (`employee_id`)
@@ -444,6 +472,11 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`postgraduate_program_supervision` (
   CONSTRAINT `fk_postgraduate_accreditation_post_graduate_program1`
     FOREIGN KEY (`postgraduate_program_id`)
     REFERENCES `scientiometer`.`postgraduate_program` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_postgraduate_program_supervision_institution1`
+    FOREIGN KEY (`institution_id`)
+    REFERENCES `scientiometer`.`institution` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -521,7 +554,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`course_level` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `course_level` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `course_level_UNIQUE` (`course_level` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -531,7 +565,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`course_classification` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `classificaton` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `classificaton_UNIQUE` (`classificaton` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -574,7 +609,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`project_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `project_type` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `project_type_UNIQUE` (`project_type` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -583,8 +619,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`participation_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `participation_type` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
+  `participation_type` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `participation_type_UNIQUE` (`participation_type` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -594,7 +631,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`aid_agency` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `agency_name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `agency_name_UNIQUE` (`agency_name` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -674,17 +712,15 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`scholarship` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `intern_id` INT NOT NULL,
   `scholarship_agency_id` INT NOT NULL,
-  `researcher_employee_id` INT NOT NULL,
   `process_number` VARCHAR(45) NOT NULL,
   `total_value_BRL` DECIMAL NOT NULL,
   `total_value_USD` DECIMAL NOT NULL,
-  `technical_reserve` VARCHAR(45) NOT NULL,
+  `technical_reserve_BRL` DECIMAL NOT NULL,
   `validity_start` YEAR(4) NOT NULL,
   `validity_end` YEAR(4) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_table1_intern1_idx` (`intern_id` ASC) VISIBLE,
   INDEX `fk_table1_scholarship_agency1_idx` (`scholarship_agency_id` ASC) VISIBLE,
-  INDEX `fk_table1_researcher1_idx` (`researcher_employee_id` ASC) VISIBLE,
   CONSTRAINT `fk_table1_intern1`
     FOREIGN KEY (`intern_id`)
     REFERENCES `scientiometer`.`intern` (`id`)
@@ -693,11 +729,6 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`scholarship` (
   CONSTRAINT `fk_table1_scholarship_agency1`
     FOREIGN KEY (`scholarship_agency_id`)
     REFERENCES `scientiometer`.`scholarship_agency` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_table1_researcher1`
-    FOREIGN KEY (`researcher_employee_id`)
-    REFERENCES `scientiometer`.`researcher` (`employee_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -802,8 +833,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`qualis` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `qualis_type` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
+  `qualis_type` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `qualis_type_UNIQUE` (`qualis_type` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -812,8 +844,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`collaboration_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `collaboration_type` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
+  `collaboration_type` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `collaboration_type_UNIQUE` (`collaboration_type` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -870,6 +903,19 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`book_shapter_published` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+USE `scientiometer` ;
+
+-- -----------------------------------------------------
+-- Placeholder table for view `scientiometer`.`researcher_data`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `scientiometer`.`researcher_data` (`employee_id` INT, `post_doctoral_type_id` INT, `researcher_id` INT, `orcid` INT, `ingress_date` INT, `email` INT, `lab_director` INT, `id` INT, `name` INT, `role_foundation_or_pq_level_id` INT, `title_id` INT, `foundation_employee` INT, `laboratory_id` INT);
+
+-- -----------------------------------------------------
+-- View `scientiometer`.`researcher_data`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `scientiometer`.`researcher_data`;
+USE `scientiometer`;
+CREATE  OR REPLACE VIEW `researcher_data` AS SELECT * FROM researcher JOIN employee ON (employee_id = id);
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
