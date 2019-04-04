@@ -13,8 +13,11 @@ services:
       - 3306:3306
       - 33060:33060
 
-  adminer:
-    image: adminer
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
     restart: always
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
     ports:
-      - 8080:8080
+      - 8080:80
