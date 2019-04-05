@@ -9,9 +9,10 @@ db_passwd = "example"
 # files changes
 year = '2019'
 
-# Each file is for a diferent lab, so we just update this variable based on the
+# Each file is for a different lab, so we just update this variable based on the
 # file opened
-lab = 'lab 1'
+lab_name = 'lab 1'
+lab_div  = 'div 1'
 
 abbreviations = {
     'DR': ['Doutorado'],
@@ -52,7 +53,6 @@ def main():
     conn.commit()
     conn.close()
 
-# TODO: treat laboratory, ingress date and email
 
 
 def section_1_1(csv_file, cursor):
@@ -63,19 +63,35 @@ def section_1_1(csv_file, cursor):
         'title': [3, ()],
         'postdoc': [4, ()],
     }
+    fk_ids = {
+        'lab_div':0,
+        'lab':0,
+        'employee':0
+    }
     for num, row in enumerate(csv_file):
         if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
-                        cursor, row, field, aux_fields[field][0]))
+                        cursor, field, row[aux_fields[field][0]]))
+
+                # insert laboratory is a special case
+                fk_ids['lab_div'] = insert_aux(cursor, 'lab_div', lab_div)
+                cursor.execute('SELECT id FROM scientiometer.laboratory WHERE laboratory_name = %s;', [lab_name])
+                fk_ids['lab'] = cursor.fetchone()
+                if fk_ids['lab'] == None:
+                    insert_complex(cursor, 'laboratory', (lab_name, fk_ids['lab_div']))
+                else:
+                    fk_ids['lab'] = fk_ids['lab'][0]
+
+                # TODO: handle foundation employee, ingress date and email
                 # insert employee
-                id = insert_complex(
-                    cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 0, 1))
+                fk_ids['employee'] = insert_complex(
+                    cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 0, fk_ids['lab']))
                 # insert researcher
                 insert_complex(
-                    cursor, 'researcher', (id, aux_fields['postdoc'][1], row[5], row[6], '2019/01/01', '', 0))
+                    cursor, 'researcher', (fk_ids['employee'], aux_fields['postdoc'][1], row[5], row[6], '2019/01/01', '', 0))
 
 
 def section_1_2(csv_file, cursor):
@@ -91,7 +107,7 @@ def section_1_2(csv_file, cursor):
                 print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
-                        cursor, row, field, aux_fields[field][0]))
+                        cursor, field, row[aux_fields[field][0]]))
                 # insert employee
                 insert_complex(
                     cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 1, 1))
@@ -110,7 +126,7 @@ def section_1_3(csv_file, cursor):
                 print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
-                        cursor, row, field, aux_fields[field][0]))
+                        cursor, field, row[aux_fields[field][0]]))
                 # insert employee
                 insert_complex(
                     cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 0, 1))
@@ -132,7 +148,7 @@ def section_1_4(csv_file, cursor):
                 print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
-                        cursor, row, field, aux_fields[field][0]))
+                        cursor, field, row[aux_fields[field][0]]))
 
                 # insert intern
                 cursor.execute(
@@ -159,7 +175,7 @@ def section_1_5(csv_file, cursor):
                 print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
-                        cursor, row, field, aux_fields[field][0]))
+                        cursor, field, row[aux_fields[field][0]]))
 
                 # insert intern
                 cursor.execute(
@@ -184,7 +200,7 @@ def section_1_6(csv_file, cursor):
                 print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
-                        cursor, row, field, aux_fields[field][0]))
+                        cursor, field, row[aux_fields[field][0]]))
 
                 # insert productivity scholarship
                 cursor.execute(
@@ -210,7 +226,7 @@ def section_2_1(csv_file, cursor):
                 print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
-                        cursor, row, field, aux_fields[field][0]))
+                        cursor, field, row[aux_fields[field][0]]))
 
                 # insert productivity scholarship
                 # TODO: handle lab and year
@@ -221,7 +237,7 @@ def section_2_1(csv_file, cursor):
                     row[1], row[2], aux_fields['qualis'][1], fk_ids['lab'], aux_fields['collab_type'][1], year))
 
 
-def insert_aux(cursor, csv_row, query, csv_row_n):
+def insert_aux(cursor, query, data):
     inserts = {
         'title': 'INSERT INTO `scientiometer`.`title` (`id`, `title`) VALUES (NULL, %s);',
         'role': 'INSERT INTO `scientiometer`.`role_foundation_or_pq_level` (`id`, `role_name_or_pq_level`) VALUES (NULL, %s);',
@@ -231,6 +247,7 @@ def insert_aux(cursor, csv_row, query, csv_row_n):
         'cnpq_level': 'INSERT INTO `scientiometer`.`cnpq_level` (`id`, `cnpq_level`) VALUES (NULL, %s);',
         'collab_type': 'INSERT INTO `scientiometer`.`collaboration_type` (`id`, `collaboration_type`) VALUES (NULL, %s);',
         'qualis': 'INSERT INTO `scientiometer`.`qualis` (`id`, `qualis_type`) VALUES (NULL, %s);',
+        'lab_div':'INSERT INTO `scientiometer`.`lab_division` (`id`, `division_name`) VALUES (NULL, %s);',
 
     }
     selects = {
@@ -242,12 +259,13 @@ def insert_aux(cursor, csv_row, query, csv_row_n):
         'cnpq_level': 'SELECT id FROM `scientiometer`.`cnpq_level` WHERE cnpq_level = %s;',
         'collab_type': 'SELECT id FROM `scientiometer`.`collaboration_type` WHERE collaboration_type = %s;',
         'qualis': 'SELECT id FROM `scientiometer`.`qualis` WHERE qualis_type = %s;',
+        'lab_div':'SELECT id FROM `scientiometer`.`lab_division` WHERE division_name = %s;',
     }
 
-    if csv_row[csv_row_n] in abbreviations:
-        value = abbreviations[csv_row[csv_row_n]]
+    if data in abbreviations:
+        value = abbreviations[data]
     else:
-        value = [csv_row[csv_row_n]]
+        value = [data]
 
     print(value)
 
@@ -272,7 +290,8 @@ def insert_complex(cursor, table, data):
         'intern': 'INSERT INTO `scientiometer`.`intern` (`id`, `name`, `researcher_employee_id`, `internship_level_id`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s);',
         'scholarship': 'INSERT INTO `scientiometer`.`scholarship` (`id`, `intern_id`, `scholarship_agency_id`, `process_number`, `total_value_BRL`, `total_value_USD`, `technical_reserve_BRL`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'prod_scholarship': 'INSERT INTO `scientiometer`.`productivity_scholarship` (`id`, `cnpq_level_id`, `validity_start`, `validity_end`, `granted_researcher_id`) VALUES (NULL, %s, %s, %s, %s);',
-        'published_work': 'INSERT INTO `scientiometer`.`published_work` (`id`, `doi_url`, `reference`, `qualis_id`, `laboratory_id`, `collaboration_type_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);'
+        'published_work': 'INSERT INTO `scientiometer`.`published_work` (`id`, `doi_url`, `reference`, `qualis_id`, `laboratory_id`, `collaboration_type_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
+        'lab':'INSERT INTO `scientiometer`.`laboratory` (`id`, `laboratory_name`, `lab_division_id`) VALUES (NULL, %s, %s);',
     }
     print(data)
     cursor.execute(inserts[table], data)
