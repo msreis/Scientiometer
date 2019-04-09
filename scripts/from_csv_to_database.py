@@ -55,6 +55,8 @@ def main():
     section_2_3(csv_file, cursor)
     file.seek(0)
     section_2_4(csv_file, cursor)
+    file.seek(0)
+    section_2_5(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -295,6 +297,27 @@ def section_2_4(csv_file, cursor):
                 insert_complex(cursor, 'article_student_postdoc', (
                     fk_ids['researcher'], aux_fields['scholarship_agency'][1], row[2], row[3], row[4], row[5], row[6], year))
 
+def section_2_5(csv_file, cursor):
+    print('Section 2.5 ----')
+    lines = (328, 20)
+    aux_fields = {
+        'scholarship_agency': [4, ()],
+    }
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+            if row[1]:
+                print(row)
+                aux_fields['scholarship_agency'][1] = insert_aux(
+                    cursor, 'scholarship_agency', 'CAPES')
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+                insert_complex(cursor, 'article_student_postdoc', (
+                    fk_ids['researcher'], aux_fields['scholarship_agency'][1], row[2], row[3], row[4], row[5], row[6], year))
 
 def insert_aux(cursor, query, data):
     inserts = {
