@@ -57,6 +57,8 @@ def main():
     section_2_4(csv_file, cursor)
     file.seek(0)
     section_2_5(csv_file, cursor)
+    file.seek(0)
+    section_2_6(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -66,9 +68,9 @@ def section_1_1(csv_file, cursor):
     print('Section 1.1 ----')
     lines = (14, 20)
     aux_fields = {
-        'role': [2, ()],
-        'title': [3, ()],
-        'postdoc': [4, ()],
+        'role': [2, 0],
+        'title': [3, 0],
+        'postdoc': [4, 0],
     }
     fk_ids = {
         'lab_div': 0,
@@ -108,8 +110,8 @@ def section_1_2(csv_file, cursor):
     print('Section 1.2 ----')
     lines = (41, 23)
     aux_fields = {
-        'role': [2, ()],
-        'title': [3, ()],
+        'role': [2, 0],
+        'title': [3, 0],
     }
     for num, row in enumerate(csv_file):
         if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
@@ -127,8 +129,8 @@ def section_1_3(csv_file, cursor):
     print('Section 1.3 ----')
     lines = (71, 10)
     aux_fields = {
-        'role': [2, ()],
-        'title': [3, ()],
+        'role': [2, 0],
+        'title': [3, 0],
     }
     for num, row in enumerate(csv_file):
         if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
@@ -146,7 +148,7 @@ def section_1_4(csv_file, cursor):
     print('Section 1.4 ----')
     lines = (88, 40)
     aux_fields = {
-        'internship_level': [3, ()],
+        'internship_level': [3, 0],
     }
     fk_ids = {
         'researcher': 0,
@@ -173,7 +175,7 @@ def section_1_5(csv_file, cursor):
     print('Section 1.5 ----')
     lines = (136, 20)
     aux_fields = {
-        'internship_level': [3, ()],
+        'internship_level': [3, 0],
     }
     fk_ids = {
         'researcher': 0,
@@ -199,7 +201,7 @@ def section_1_6(csv_file, cursor):
     print('Section 1.6 ----')
     lines = (165, 10)
     aux_fields = {
-        'cnpq_level': [2, ()],
+        'cnpq_level': [2, 0],
     }
     fk_ids = {
         'researcher': 0,
@@ -224,8 +226,8 @@ def section_2_1(csv_file, cursor):
     print('Section 2.1 ----')
     lines = (190, 60)
     aux_fields = {
-        'qualis': [3, ()],
-        'collab_type': [4, ()],
+        'qualis': [3, 0],
+        'collab_type': [4, 0],
     }
     for num, row in enumerate(csv_file):
         if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
@@ -243,7 +245,7 @@ def section_2_2(csv_file, cursor):
     print('Section 2.2 ----')
     lines = (260, 10)
     aux_fields = {
-        'collab_type': [4, ()],
+        'collab_type': [4, 0],
     }
     for num, row in enumerate(csv_file):
         if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
@@ -279,7 +281,7 @@ def section_2_4(csv_file, cursor):
     print('Section 2.4 ----')
     lines = (302, 20)
     aux_fields = {
-        'scholarship_agency': [4, ()],
+        'scholarship_agency': [4, 0],
     }
     fk_ids = {
         'researcher': 0,
@@ -301,7 +303,7 @@ def section_2_5(csv_file, cursor):
     print('Section 2.5 ----')
     lines = (328, 20)
     aux_fields = {
-        'scholarship_agency': [4, ()],
+        'scholarship_agency': [4, 0],
     }
     fk_ids = {
         'researcher': 0,
@@ -318,6 +320,37 @@ def section_2_5(csv_file, cursor):
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'article_student_postdoc', (
                     fk_ids['researcher'], aux_fields['scholarship_agency'][1], row[2], row[3], row[4], row[5], row[6], year))
+
+def section_2_6(csv_file, cursor):
+    print('Section 2.6 ----')
+    lines = (354, 20)
+    aux_fields = {
+        'scholarship_agency': [4, 0, 0],
+    }
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+            if row[1]:
+                print(row)
+                aux_fields['scholarship_agency'][1] = insert_aux(
+                    cursor, 'scholarship_agency', 'CNPq')
+                aux_fields['scholarship_agency'][2] = insert_aux(
+                    cursor, 'scholarship_agency', 'FB')
+
+                # TODO: is this correct? The number of publications is
+                # duplicated, or is it the sum of cnpq and fb?
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+                insert_complex(cursor, 'article_student_postdoc', (
+                    fk_ids['researcher'], aux_fields['scholarship_agency'][1], row[2], row[3], row[5], row[6], row[7], year))
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+                insert_complex(cursor, 'article_student_postdoc', (
+                    fk_ids['researcher'], aux_fields['scholarship_agency'][2], row[2], row[4], row[5], row[6], row[7], year))
 
 def insert_aux(cursor, query, data):
     inserts = {
