@@ -59,6 +59,8 @@ def main():
     section_2_5(csv_file, cursor)
     file.seek(0)
     section_2_6(csv_file, cursor)
+    file.seek(0)
+    section_2_7(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -352,6 +354,30 @@ def section_2_6(csv_file, cursor):
                 insert_complex(cursor, 'article_student_postdoc', (
                     fk_ids['researcher'], aux_fields['scholarship_agency'][2], row[2], row[4], row[5], row[6], row[7], year))
 
+def section_2_7(csv_file, cursor):
+    print('Section 2.7 ----')
+    lines = (386, 20)
+    aux_fields = {
+        'line_research': [4, 0, 0],
+    }
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+            if row[1]:
+                print(row)
+                aux_fields['line_research'][1] = insert_aux(
+                    cursor, 'line_research', row[6])
+                aux_fields['line_research'][2] = insert_aux(
+                    cursor, 'line_research', row[7])
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+                insert_complex(cursor, 'scientometric', (
+                    fk_ids['researcher'],  row[2], row[3], row[4], row[5], aux_fields['line_research'][1], aux_fields['line_research'][2], year))
+
 def insert_aux(cursor, query, data):
     inserts = {
         'title': 'INSERT INTO `scientiometer`.`title` (`id`, `title`) VALUES (NULL, %s);',
@@ -364,6 +390,7 @@ def insert_aux(cursor, query, data):
         'qualis': 'INSERT INTO `scientiometer`.`qualis` (`id`, `qualis_type`) VALUES (NULL, %s);',
         'lab_div': 'INSERT INTO `scientiometer`.`lab_division` (`id`, `division_name`) VALUES (NULL, %s);',
         'scholarship_agency': 'INSERT INTO `scientiometer`.`scholarship_agency` (`id`, `agency`) VALUES (NULL, %s);',
+        'line_research': 'INSERT INTO `scientiometer`.`line_of_research` (`id`, `line_of_research`) VALUES (NULL, %s);',
 
     }
     selects = {
@@ -377,6 +404,7 @@ def insert_aux(cursor, query, data):
         'qualis': 'SELECT id FROM `scientiometer`.`qualis` WHERE qualis_type = %s;',
         'lab_div': 'SELECT id FROM `scientiometer`.`lab_division` WHERE division_name = %s;',
         'scholarship_agency': 'SELECT id FROM `scientiometer`.`scholarship_agency` WHERE agency = %s;',
+        'line_research': 'SELECT id FROM `scientiometer`.`line_of_research` WHERE line_of_research = %s;'
     }
 
     if data in abbreviations:
@@ -412,6 +440,7 @@ def insert_complex(cursor, table, data):
         'published_book': 'INSERT INTO `scientiometer`.`book_chapter_published` (`id`, `doi_url`, `isbn_online`, `isbn_print`, `reference`, `laboratory_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'article_prod': 'INSERT INTO `scientiometer`.`article_production` (`id`, `researcher_employee_id`, `n_total_publications`, `n_intl_colab`, `n_first_author`, `n_corresponding_author`, `n_last_author`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s);',
         'article_student_postdoc': 'INSERT INTO `scientiometer`.`article_student_postdoc` (`id`, `researcher_employee_id`, `scholarship_agency_id`, `n_intl_colab`, `n_sci_initiation`, `n_msc_student`, `n_doc_student`, `n_postdoc`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
+        'scientometric': 'INSERT INTO `scientiometer`.`scientometric_index` (`id`, `researcher_employee_id`, `n_citations_wos`, `h_index_wos`, `n_citations_gs`, `h_index_gs`, `main_line_of_research_id`, `secondary_line_of_research_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);'
     }
     print(data)
     cursor.execute(inserts[table], data)
