@@ -323,7 +323,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`congress` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
   `country` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -345,7 +345,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`participation_congress` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `cogress_id` INT NOT NULL,
+  `congress_id` INT NOT NULL,
   `researcher_employee_id` INT NOT NULL,
   `participation_role_id` INT NOT NULL,
   `year` YEAR(4) NOT NULL,
@@ -353,7 +353,7 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`participation_congress` (
   PRIMARY KEY (`id`),
   INDEX `fk_participation_congress_participation_role1_idx` (`participation_role_id` ASC) VISIBLE,
   CONSTRAINT `fk_participation_congress_cogress1`
-    FOREIGN KEY (`cogress_id`)
+    FOREIGN KEY (`congress_id`)
     REFERENCES `scientiometer`.`congress` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -884,9 +884,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `scientiometer`.`book_shapter_published`
+-- Table `scientiometer`.`book_chapter_published`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scientiometer`.`book_shapter_published` (
+CREATE TABLE IF NOT EXISTS `scientiometer`.`book_chapter_published` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `doi_url` VARCHAR(150) NULL,
   `isbn_online` VARCHAR(45) NULL,
