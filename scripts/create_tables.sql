@@ -450,15 +450,16 @@ ENGINE = InnoDB;
 -- Table `scientiometer`.`postgraduate_program_supervision`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`postgraduate_program_supervision` (
-  `researcher_employee_id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `researcher_employee_id` INT NOT NULL,
   `postgraduate_level_id` INT NOT NULL,
   `postgraduate_program_id` INT NOT NULL,
   `institution_id` INT NOT NULL,
   `year` YEAR(4) NOT NULL,
-  PRIMARY KEY (`researcher_employee_id`, `postgraduate_level_id`, `postgraduate_program_id`),
   INDEX `fk_postgraduate_accreditation_postgraduate_level1_idx` (`postgraduate_level_id` ASC) VISIBLE,
   INDEX `fk_postgraduate_accreditation_post_graduate_program1_idx` (`postgraduate_program_id` ASC) VISIBLE,
   INDEX `fk_postgraduate_program_supervision_institution1_idx` (`institution_id` ASC) VISIBLE,
+  PRIMARY KEY (`id`),
   CONSTRAINT `fk_postgraduate_accreditation_researcher1`
     FOREIGN KEY (`researcher_employee_id`)
     REFERENCES `scientiometer`.`researcher` (`employee_id`)
