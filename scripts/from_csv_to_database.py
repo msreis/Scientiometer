@@ -65,6 +65,8 @@ def main():
     section_2_8(csv_file, cursor)
     file.seek(0)
     section_3_1(csv_file, cursor)
+    file.seek(0)
+    section_3_2(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -439,6 +441,43 @@ def section_3_1(csv_file, cursor):
                 insert_complex(cursor, 'supervision', (
                     row[1], fk_ids['researcher'], aux_fields['institution'][1], aux_fields['supervision_type'][1], year))
 
+
+def section_3_2(csv_file, cursor):
+    print('Section 3.2 ----')
+    lines = (468, 20)
+    aux_fields = {
+        'institution': [2, 0],
+        'postgraduate_level': [3, 0],
+        'postgraduate_program': [2, 0],
+    }
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+            if row[1]:
+                print(row)
+                # Separates program from institution from same field in csv.
+                # Also handles names containing '-' and names without institution
+                program = row[aux_fields['postgraduate_program'][0]].split('-')[0:-1]\
+                    or row[aux_fields['postgraduate_program'][0]].split('-')[0]
+                program = '-'.join(program).strip()
+
+                aux_fields['institution'][1] = (insert_aux(
+                    cursor, 'institution', row[aux_fields['institution'][0]].split('-')[-1].strip()))
+
+                aux_fields['postgraduate_program'][1] = (insert_aux(
+                    cursor, 'postgraduate_program', program))
+
+                aux_fields['postgraduate_level'][1] = (insert_aux(
+                    cursor, 'postgraduate_level', row[aux_fields['postgraduate_level'][0]]))
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+                insert_complex(cursor, 'postgrad_supervision', (fk_ids['researcher'], aux_fields['postgraduate_level'][1], aux_fields['postgraduate_program'][1], aux_fields['institution'][1], year ))
+
+
 def insert_aux(cursor, query, data):
     inserts = {
         'title': 'INSERT INTO `scientiometer`.`title` (`id`, `title`) VALUES (NULL, %s);',
@@ -455,6 +494,8 @@ def insert_aux(cursor, query, data):
         'participation_role': 'INSERT INTO `scientiometer`.`participation_role` (`id`, `role_description`) VALUES (NULL, %s);',
         'institution': 'INSERT INTO `scientiometer`.`institution` (`id`, `institution_name`) VALUES (NULL, %s);',
         'supervision_type': 'INSERT INTO `scientiometer`.`supervision_type` (`id`, `type_description`) VALUES (NULL, %s);',
+        'postgraduate_program': 'INSERT INTO `scientiometer`.`postgraduate_program` (`id`, `program_name`) VALUES (NULL, %s);',
+        'postgraduate_level': 'INSERT INTO `scientiometer`.`postgraduate_level` (`id`, `level`) VALUES (NULL, %s);',
     }
     selects = {
         'title': 'SELECT id FROM `scientiometer`.title WHERE title = %s;',
@@ -471,6 +512,8 @@ def insert_aux(cursor, query, data):
         'participation_role': 'SELECT id FROM `scientiometer`.`participation_role` WHERE role_description =  %s;',
         'institution': 'SELECT id FROM `scientiometer`.`institution` WHERE institution_name = %s;',
         'supervision_type': 'SELECT id FROM `scientiometer`.`supervision_type` WHERE type_description = %s;',
+        'postgraduate_program': 'SELECT id FROM `scientiometer`.`postgraduate_program` WHERE program_name = %s;',
+        'postgraduate_level': 'SELECT id FROM `scientiometer`.`postgraduate_level` WHERE level = %s;',
     }
 
     if data in abbreviations:
@@ -509,7 +552,8 @@ def insert_complex(cursor, table, data):
         'scientometric': 'INSERT INTO `scientiometer`.`scientometric_index` (`id`, `researcher_employee_id`, `n_citations_wos`, `h_index_wos`, `n_citations_gs`, `h_index_gs`, `main_line_of_research_id`, `secondary_line_of_research_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'congress': 'INSERT INTO `scientiometer`.`congress` (`id`, `name`, `country`) VALUES (NULL, %s, %s);',
         'participation_congress': 'INSERT INTO `scientiometer`.`participation_congress` (`id`, `congress_id`, `researcher_employee_id`, `participation_role_id`, `year`) VALUES (NULL, %s, %s, %s, %s);',
-        'supervision': 'INSERT INTO `scientiometer`.`supervision` (`id`, `student_name`, `supervisor_researcher_id`, `institution_id`, `supervision_type_id`, `finish_year`) VALUES (NULL, %s, %s, %s, %s, %s);'
+        'supervision': 'INSERT INTO `scientiometer`.`supervision` (`id`, `student_name`, `supervisor_researcher_id`, `institution_id`, `supervision_type_id`, `finish_year`) VALUES (NULL, %s, %s, %s, %s, %s);',
+        'postgrad_supervision': 'INSERT INTO `scientiometer`.`postgraduate_program_supervision` (`id`, `researcher_employee_id`, `postgraduate_level_id`, `postgraduate_program_id`, `institution_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s);',
     }
     print(data)
     cursor.execute(inserts[table], data)
