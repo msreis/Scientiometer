@@ -63,6 +63,8 @@ def main():
     section_2_7(csv_file, cursor)
     file.seek(0)
     section_2_8(csv_file, cursor)
+    file.seek(0)
+    section_3_1(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -413,6 +415,30 @@ def section_2_8(csv_file, cursor):
                             fk_ids['congress'], fk_ids['researcher'], aux_fields['participation_role'][1 + i], year))
 
 
+def section_3_1(csv_file, cursor):
+    print('Section 3.1 ----')
+    lines = (445, 15)
+    aux_fields = {
+        'institution': [3, 0],
+        'supervision_type': [4, 0],
+    }
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+            if row[1]:
+                print(row)
+                for field in aux_fields:
+                    aux_fields[field][1] = (insert_aux(
+                        cursor, field, row[aux_fields[field][0]]))
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+                insert_complex(cursor, 'supervision', (
+                    row[1], fk_ids['researcher'], aux_fields['institution'][1], aux_fields['supervision_type'][1], year))
+
 def insert_aux(cursor, query, data):
     inserts = {
         'title': 'INSERT INTO `scientiometer`.`title` (`id`, `title`) VALUES (NULL, %s);',
@@ -427,6 +453,8 @@ def insert_aux(cursor, query, data):
         'scholarship_agency': 'INSERT INTO `scientiometer`.`scholarship_agency` (`id`, `agency`) VALUES (NULL, %s);',
         'line_research': 'INSERT INTO `scientiometer`.`line_of_research` (`id`, `line_of_research`) VALUES (NULL, %s);',
         'participation_role': 'INSERT INTO `scientiometer`.`participation_role` (`id`, `role_description`) VALUES (NULL, %s);',
+        'institution': 'INSERT INTO `scientiometer`.`institution` (`id`, `institution_name`) VALUES (NULL, %s);',
+        'supervision_type': 'INSERT INTO `scientiometer`.`supervision_type` (`id`, `type_description`) VALUES (NULL, %s);',
     }
     selects = {
         'title': 'SELECT id FROM `scientiometer`.title WHERE title = %s;',
@@ -441,6 +469,8 @@ def insert_aux(cursor, query, data):
         'scholarship_agency': 'SELECT id FROM `scientiometer`.`scholarship_agency` WHERE agency = %s;',
         'line_research': 'SELECT id FROM `scientiometer`.`line_of_research` WHERE line_of_research = %s;',
         'participation_role': 'SELECT id FROM `scientiometer`.`participation_role` WHERE role_description =  %s;',
+        'institution': 'SELECT id FROM `scientiometer`.`institution` WHERE institution_name = %s;',
+        'supervision_type': 'SELECT id FROM `scientiometer`.`supervision_type` WHERE type_description = %s;',
     }
 
     if data in abbreviations:
@@ -472,13 +502,14 @@ def insert_complex(cursor, table, data):
         'scholarship': 'INSERT INTO `scientiometer`.`scholarship` (`id`, `intern_id`, `scholarship_agency_id`, `process_number`, `total_value_BRL`, `total_value_USD`, `technical_reserve_BRL`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'prod_scholarship': 'INSERT INTO `scientiometer`.`productivity_scholarship` (`id`, `cnpq_level_id`, `validity_start`, `validity_end`, `granted_researcher_id`) VALUES (NULL, %s, %s, %s, %s);',
         'published_work': 'INSERT INTO `scientiometer`.`published_work` (`id`, `doi_url`, `reference`, `qualis_id`, `laboratory_id`, `collaboration_type_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
-        'laboratory': 'INSERT INTO `scientiometer`.`laboratory` (`id`, `laboratory_name`, `lab_division_id`) VALUES (NULL, %s, %s);',
+        'laboratory': 'INSERT INTO `scientiometer`.`laboratory` (`id`, `laboratory_name`, `lab_division_id`) VALUES (NULL, %s, %s) ON DUPLICATE KEY UPDATE laboratory_name = laboratory_name;',
         'published_book': 'INSERT INTO `scientiometer`.`book_chapter_published` (`id`, `doi_url`, `isbn_online`, `isbn_print`, `reference`, `laboratory_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'article_prod': 'INSERT INTO `scientiometer`.`article_production` (`id`, `researcher_employee_id`, `n_total_publications`, `n_intl_collab`, `n_first_author`, `n_corresponding_author`, `n_last_author`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s);',
         'article_student_postdoc': 'INSERT INTO `scientiometer`.`article_student_postdoc` (`id`, `researcher_employee_id`, `scholarship_agency_id`, `n_intl_collab`, `n_sci_initiation`, `n_msc_student`, `n_doc_student`, `n_postdoc`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'scientometric': 'INSERT INTO `scientiometer`.`scientometric_index` (`id`, `researcher_employee_id`, `n_citations_wos`, `h_index_wos`, `n_citations_gs`, `h_index_gs`, `main_line_of_research_id`, `secondary_line_of_research_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'congress': 'INSERT INTO `scientiometer`.`congress` (`id`, `name`, `country`) VALUES (NULL, %s, %s);',
         'participation_congress': 'INSERT INTO `scientiometer`.`participation_congress` (`id`, `congress_id`, `researcher_employee_id`, `participation_role_id`, `year`) VALUES (NULL, %s, %s, %s, %s);',
+        'supervision': 'INSERT INTO `scientiometer`.`supervision` (`id`, `student_name`, `supervisor_researcher_id`, `institution_id`, `supervision_type_id`, `finish_year`) VALUES (NULL, %s, %s, %s, %s, %s);'
     }
     print(data)
     cursor.execute(inserts[table], data)
