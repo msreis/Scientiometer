@@ -67,6 +67,8 @@ def main():
     section_3_1(csv_file, cursor)
     file.seek(0)
     section_3_2(csv_file, cursor)
+    file.seek(0)
+    section_3_3(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -477,6 +479,42 @@ def section_3_2(csv_file, cursor):
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'postgrad_supervision', (fk_ids['researcher'], aux_fields['postgraduate_level'][1], aux_fields['postgraduate_program'][1], aux_fields['institution'][1], year ))
 
+def section_3_3(csv_file, cursor):
+    print('Section 3.3 ----')
+    lines = (512, 30)
+    aux_fields = {
+        'institution': [2, 0],
+        'postgraduate_program': [2, 0],
+    }
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+            if row[1]:
+                print(row)
+                # Separates program from institution from same field in csv.
+                # Also handles names containing '-' and names without institution
+                program = row[aux_fields['postgraduate_program'][0]].split('-')[0:-1]\
+                    or row[aux_fields['postgraduate_program'][0]].split('-')[0]
+                program = '-'.join(program).strip()
+
+                institution = row[aux_fields['institution'][0]].split('-')[-1].strip()
+                if institution == '':
+                    institution = row[3]
+
+                aux_fields['institution'][1] = (insert_aux(
+                    cursor, 'institution', institution))
+
+                aux_fields['postgraduate_program'][1] = (insert_aux(
+                    cursor, 'postgraduate_program', program))
+
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+                insert_complex(cursor, 'postgrad_ministered', (fk_ids['researcher'], aux_fields['postgraduate_program'][1], row[4], row[5], aux_fields['institution'][1], year ))
+
 
 def insert_aux(cursor, query, data):
     inserts = {
@@ -554,6 +592,7 @@ def insert_complex(cursor, table, data):
         'participation_congress': 'INSERT INTO `scientiometer`.`participation_congress` (`id`, `congress_id`, `researcher_employee_id`, `participation_role_id`, `year`) VALUES (NULL, %s, %s, %s, %s);',
         'supervision': 'INSERT INTO `scientiometer`.`supervision` (`id`, `student_name`, `supervisor_researcher_id`, `institution_id`, `supervision_type_id`, `finish_year`) VALUES (NULL, %s, %s, %s, %s, %s);',
         'postgrad_supervision': 'INSERT INTO `scientiometer`.`postgraduate_program_supervision` (`id`, `researcher_employee_id`, `postgraduate_level_id`, `postgraduate_program_id`, `institution_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s);',
+        'postgrad_ministered': 'INSERT INTO `scientiometer`.`postgraduate_discipline_ministered_under_supervision` (`id`, `supervisor_researcher_id`, `postgraduate_program_id`, `discipline_name`, `discipline_code`, `institution_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);'
     }
     print(data)
     cursor.execute(inserts[table], data)
