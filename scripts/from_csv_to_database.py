@@ -34,7 +34,7 @@ def main():
     cursor = conn.cursor()
 
     file = open("rel.csv")
-    csv_file = csv.reader(file, delimiter=',')
+    csv_file = csv.reader(file, delimiter='|')
 
     section_1_1(csv_file, cursor)
     file.seek(0)
@@ -76,6 +76,7 @@ def main():
 
 def section_1_1(csv_file, cursor):
     print('Section 1.1 ----')
+    # TODO: find start line automatically
     lines = (14, 20)
     aux_fields = {
         'role': [2, 0],
@@ -481,7 +482,7 @@ def section_3_2(csv_file, cursor):
 
 def section_3_3(csv_file, cursor):
     print('Section 3.3 ----')
-    lines = (512, 30)
+    lines = (494, 10)
     aux_fields = {
         'institution': [2, 0],
         'postgraduate_program': [2, 0],
@@ -495,11 +496,11 @@ def section_3_3(csv_file, cursor):
                 print(row)
                 # Separates program from institution from same field in csv.
                 # Also handles names containing '-' and names without institution
-                program = row[aux_fields['postgraduate_program'][0]].split('-')[0:-1]\
-                    or row[aux_fields['postgraduate_program'][0]].split('-')[0]
+                program = row[aux_fields['postgraduate_program'][0]].split(' - ')[0:-1]\
+                    or row[aux_fields['postgraduate_program'][0]].split(' - ')[0]
                 program = '-'.join(program).strip()
 
-                institution = row[aux_fields['institution'][0]].split('-')[-1].strip()
+                institution = row[aux_fields['institution'][0]].split(' - ')[-1].strip()
                 if institution == '':
                     institution = row[3]
 
