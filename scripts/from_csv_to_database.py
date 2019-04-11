@@ -71,6 +71,8 @@ def main():
     section_3_3(csv_file, cursor)
     file.seek(0)
     section_3_4(csv_file, cursor)
+    file.seek(0)
+    section_3_5(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -110,7 +112,7 @@ def section_1_1(csv_file, cursor):
                     fk_ids['lab'] = fk_ids['lab'][0]
                 lab_name[1] = fk_ids['lab']
 
-                # TODO: handle foundation employee, ingress date and email
+                # TODO: handle foundation employee (level i-vi), ingress date and email
                 # insert employee
                 fk_ids['employee'] = insert_complex(
                     cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 0, fk_ids['lab']))
@@ -480,7 +482,9 @@ def section_3_2(csv_file, cursor):
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
-                insert_complex(cursor, 'postgrad_supervision', (fk_ids['researcher'], aux_fields['postgraduate_level'][1], aux_fields['postgraduate_program'][1], aux_fields['institution'][1], year ))
+                insert_complex(cursor, 'postgrad_supervision', (fk_ids['researcher'], aux_fields['postgraduate_level']
+                                                                [1], aux_fields['postgraduate_program'][1], aux_fields['institution'][1], year))
+
 
 def section_3_3(csv_file, cursor):
     print('Section 3.3 ----')
@@ -502,7 +506,8 @@ def section_3_3(csv_file, cursor):
                     or row[aux_fields['postgraduate_program'][0]].split(' - ')[0]
                 program = '-'.join(program).strip()
 
-                institution = row[aux_fields['institution'][0]].split(' - ')[-1].strip()
+                institution = row[aux_fields['institution']
+                                  [0]].split(' - ')[-1].strip()
                 if institution == '':
                     institution = row[3]
 
@@ -512,11 +517,12 @@ def section_3_3(csv_file, cursor):
                 aux_fields['postgraduate_program'][1] = (insert_aux(
                     cursor, 'postgraduate_program', program))
 
-
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
-                insert_complex(cursor, 'postgrad_ministered', (fk_ids['researcher'], aux_fields['postgraduate_program'][1], row[4], row[3], aux_fields['institution'][1], year ))
+                insert_complex(cursor, 'postgrad_ministered', (
+                    fk_ids['researcher'], aux_fields['postgraduate_program'][1], row[4], row[3], aux_fields['institution'][1], year))
+
 
 def section_3_4(csv_file, cursor):
     print('Section 3.4 ----')
@@ -538,7 +544,8 @@ def section_3_4(csv_file, cursor):
                     or row[aux_fields['postgraduate_program'][0]].split(' - ')[0]
                 program = '-'.join(program).strip()
 
-                institution = row[aux_fields['institution'][0]].split(' - ')[-1].strip()
+                institution = row[aux_fields['institution']
+                                  [0]].split(' - ')[-1].strip()
                 if institution == '':
                     institution = row[3]
 
@@ -548,11 +555,36 @@ def section_3_4(csv_file, cursor):
                 aux_fields['postgraduate_program'][1] = (insert_aux(
                     cursor, 'postgraduate_program', program))
 
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+                insert_complex(cursor, 'lectures', (
+                    fk_ids['researcher'], aux_fields['postgraduate_program'][1], aux_fields['institution'][1], row[4], row[5],  year))
+
+
+def section_3_5(csv_file, cursor):
+    print('Section 3.5 ----')
+    lines = (551, 20)
+    aux_fields = {
+        'course_level': [3, 0],
+        'course_classification': [4, 0],
+    }
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+            if row[1]:
+                print(row)
+                for field in aux_fields:
+                    aux_fields[field][1] = (insert_aux(
+                        cursor, field, row[aux_fields[field][0]]))
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
-                insert_complex(cursor, 'lectures', (fk_ids['researcher'], aux_fields['postgraduate_program'][1], aux_fields['institution'][1], row[4], row[5],  year ))
+                insert_complex(cursor, 'coordination_course', (
+                    fk_ids['researcher'], row[2], aux_fields['course_level'][1], aux_fields['course_classification'][1], row[5], year))
 
 
 def insert_aux(cursor, query, data):
@@ -573,6 +605,8 @@ def insert_aux(cursor, query, data):
         'supervision_type': 'INSERT INTO `scientiometer`.`supervision_type` (`id`, `type_description`) VALUES (NULL, %s);',
         'postgraduate_program': 'INSERT INTO `scientiometer`.`postgraduate_program` (`id`, `program_name`) VALUES (NULL, %s);',
         'postgraduate_level': 'INSERT INTO `scientiometer`.`postgraduate_level` (`id`, `level`) VALUES (NULL, %s);',
+        'course_level': 'INSERT INTO `scientiometer`.`course_level` (`id`, `course_level`) VALUES (NULL, %s);',
+        'course_classification': 'INSERT INTO `scientiometer`.`course_classification` (`id`, `classificaton`) VALUES (NULL, %s);'
     }
     selects = {
         'title': 'SELECT id FROM `scientiometer`.title WHERE title = %s;',
@@ -591,6 +625,8 @@ def insert_aux(cursor, query, data):
         'supervision_type': 'SELECT id FROM `scientiometer`.`supervision_type` WHERE type_description = %s;',
         'postgraduate_program': 'SELECT id FROM `scientiometer`.`postgraduate_program` WHERE program_name = %s;',
         'postgraduate_level': 'SELECT id FROM `scientiometer`.`postgraduate_level` WHERE level = %s;',
+        'course_level': 'SELECT id FROM `scientiometer`.`course_level` WHERE course_level = %s;',
+        'course_classification': 'SELECT id FROM `scientiometer`.`course_classification` WHERE classificaton = %s;'
     }
 
     if data in abbreviations:
@@ -633,6 +669,7 @@ def insert_complex(cursor, table, data):
         'postgrad_supervision': 'INSERT INTO `scientiometer`.`postgraduate_program_supervision` (`id`, `researcher_employee_id`, `postgraduate_level_id`, `postgraduate_program_id`, `institution_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s);',
         'postgrad_ministered': 'INSERT INTO `scientiometer`.`postgraduate_discipline_ministered_under_supervision` (`id`, `supervisor_researcher_id`, `postgraduate_program_id`, `discipline_name`, `discipline_code`, `institution_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'lectures': 'INSERT INTO `scientiometer`.`discipline_lectures_ministered` (`id`, `researcher_employee_id`, `postgraduate_program_id`, `institution_id`, `discipline_name`, `n_classes`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
+        'coordination_course': 'INSERT INTO `scientiometer`.`coordination_of_course` (`id`, `researcher_employee_id`, `course_name`, `course_level_id`, `course_classification_id`, `workload`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);'
     }
     print(data)
     cursor.execute(inserts[table], data)
