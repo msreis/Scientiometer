@@ -1,5 +1,6 @@
 import mysql.connector
 import csv
+import re
 
 db_host = "localhost"
 db_user = "root"
@@ -24,6 +25,9 @@ abbreviations = {
     'N/A': ['Não Possui']
 }
 
+# We need to seek the file in each section
+file = None
+
 
 def main():
     conn = mysql.connector.connect(
@@ -33,45 +37,28 @@ def main():
     )
     cursor = conn.cursor()
 
+    global file
     file = open("rel.csv")
     csv_file = csv.reader(file, delimiter='|')
 
     section_1_1(csv_file, cursor)
-    file.seek(0)
     section_1_2(csv_file, cursor)
-    file.seek(0)
     section_1_3(csv_file, cursor)
-    file.seek(0)
     section_1_4(csv_file, cursor)
-    file.seek(0)
     section_1_5(csv_file, cursor)
-    file.seek(0)
     section_1_6(csv_file, cursor)
-    file.seek(0)
     section_2_1(csv_file, cursor)
-    file.seek(0)
     section_2_2(csv_file, cursor)
-    file.seek(0)
     section_2_3(csv_file, cursor)
-    file.seek(0)
     section_2_4(csv_file, cursor)
-    file.seek(0)
     section_2_5(csv_file, cursor)
-    file.seek(0)
     section_2_6(csv_file, cursor)
-    file.seek(0)
     section_2_7(csv_file, cursor)
-    file.seek(0)
     section_2_8(csv_file, cursor)
-    file.seek(0)
     section_3_1(csv_file, cursor)
-    file.seek(0)
     section_3_2(csv_file, cursor)
-    file.seek(0)
     section_3_3(csv_file, cursor)
-    file.seek(0)
     section_3_4(csv_file, cursor)
-    file.seek(0)
     section_3_5(csv_file, cursor)
 
     conn.commit()
@@ -79,9 +66,11 @@ def main():
 
 
 def section_1_1(csv_file, cursor):
+    file.seek(0)
     print('Section 1.1 ----')
     # TODO: find start line automatically
-    lines = (14, 20)
+    lines = locate_table(csv_file, '1.1')
+    file.seek(0)
     aux_fields = {
         'role': [2, 0],
         'title': [3, 0],
@@ -93,7 +82,7 @@ def section_1_1(csv_file, cursor):
         'employee': 0
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -122,14 +111,15 @@ def section_1_1(csv_file, cursor):
 
 
 def section_1_2(csv_file, cursor):
+    file.seek(0)
     print('Section 1.2 ----')
-    lines = (41, 23)
+    lines = locate_table(csv_file, '1.2')
     aux_fields = {
         'role': [2, 0],
         'title': [3, 0],
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -137,18 +127,19 @@ def section_1_2(csv_file, cursor):
                         cursor, field, row[aux_fields[field][0]]))
                 # insert employee
                 insert_complex(
-                    cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 1, 1))
+                    cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 1, lab_name[1]))
 
 
 def section_1_3(csv_file, cursor):
+    file.seek(0)
     print('Section 1.3 ----')
-    lines = (71, 10)
+    lines = locate_table(csv_file, '1.3')
     aux_fields = {
         'role': [2, 0],
         'title': [3, 0],
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -156,12 +147,13 @@ def section_1_3(csv_file, cursor):
                         cursor, field, row[aux_fields[field][0]]))
                 # insert employee
                 insert_complex(
-                    cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 0, 1))
+                    cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 0, lab_name[1]))
 
 
 def section_1_4(csv_file, cursor):
+    file.seek(0)
     print('Section 1.4 ----')
-    lines = (88, 40)
+    lines = locate_table(csv_file, '1.4')
     aux_fields = {
         'internship_level': [3, 0],
     }
@@ -170,7 +162,7 @@ def section_1_4(csv_file, cursor):
         'intern': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -187,8 +179,9 @@ def section_1_4(csv_file, cursor):
 
 
 def section_1_5(csv_file, cursor):
+    file.seek(0)
     print('Section 1.5 ----')
-    lines = (136, 20)
+    lines = locate_table(csv_file, '1.5')
     aux_fields = {
         'internship_level': [3, 0],
     }
@@ -197,7 +190,7 @@ def section_1_5(csv_file, cursor):
         'intern': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -213,8 +206,9 @@ def section_1_5(csv_file, cursor):
 
 
 def section_1_6(csv_file, cursor):
+    file.seek(0)
     print('Section 1.6 ----')
-    lines = (165, 10)
+    lines = locate_table(csv_file, '1.6')
     aux_fields = {
         'cnpq_level': [2, 0],
     }
@@ -222,7 +216,7 @@ def section_1_6(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -238,14 +232,15 @@ def section_1_6(csv_file, cursor):
 
 
 def section_2_1(csv_file, cursor):
+    file.seek(0)
     print('Section 2.1 ----')
-    lines = (190, 60)
+    lines = locate_table(csv_file, '2.1')
     aux_fields = {
         'qualis': [3, 0],
         'collab_type': [4, 0],
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -257,13 +252,14 @@ def section_2_1(csv_file, cursor):
 
 
 def section_2_2(csv_file, cursor):
+    file.seek(0)
     print('Section 2.2 ----')
-    lines = (260, 10)
+    lines = locate_table(csv_file, '2.2')
     aux_fields = {
         'collab_type': [4, 0],
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -275,13 +271,14 @@ def section_2_2(csv_file, cursor):
 
 
 def section_2_3(csv_file, cursor):
+    file.seek(0)
     print('Section 2.3 ----')
-    lines = (276, 20)
+    lines = locate_table(csv_file, '2.3')
     fk_ids = {
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
 
@@ -293,8 +290,9 @@ def section_2_3(csv_file, cursor):
 
 
 def section_2_4(csv_file, cursor):
+    file.seek(0)
     print('Section 2.4 ----')
-    lines = (302, 20)
+    lines = locate_table(csv_file, '2.4')
     aux_fields = {
         'scholarship_agency': [4, 0],
     }
@@ -302,7 +300,7 @@ def section_2_4(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 aux_fields['scholarship_agency'][1] = insert_aux(
@@ -316,8 +314,9 @@ def section_2_4(csv_file, cursor):
 
 
 def section_2_5(csv_file, cursor):
+    file.seek(0)
     print('Section 2.5 ----')
-    lines = (328, 20)
+    lines = locate_table(csv_file, '2.5')
     aux_fields = {
         'scholarship_agency': [4, 0],
     }
@@ -325,7 +324,7 @@ def section_2_5(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 aux_fields['scholarship_agency'][1] = insert_aux(
@@ -339,8 +338,9 @@ def section_2_5(csv_file, cursor):
 
 
 def section_2_6(csv_file, cursor):
+    file.seek(0)
     print('Section 2.6 ----')
-    lines = (354, 20)
+    lines = locate_table(csv_file, '2.6')
     aux_fields = {
         'scholarship_agency': [4, 0, 0],
     }
@@ -348,7 +348,7 @@ def section_2_6(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 aux_fields['scholarship_agency'][1] = insert_aux(
@@ -371,8 +371,9 @@ def section_2_6(csv_file, cursor):
 
 
 def section_2_7(csv_file, cursor):
+    file.seek(0)
     print('Section 2.7 ----')
-    lines = (386, 20)
+    lines = locate_table(csv_file, '2.7')
     aux_fields = {
         'line_research': [4, 0, 0],
     }
@@ -380,7 +381,7 @@ def section_2_7(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 aux_fields['line_research'][1] = insert_aux(
@@ -396,8 +397,9 @@ def section_2_7(csv_file, cursor):
 
 
 def section_2_8(csv_file, cursor):
+    file.seek(0)
     print('Section 2.8 ----')
-    lines = (414, 20)
+    lines = locate_table(csv_file, '2.8')
     aux_fields = {
         'participation_role': [4, 0, 0, 0],
     }
@@ -406,7 +408,7 @@ def section_2_8(csv_file, cursor):
         'congress': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
 
@@ -425,8 +427,9 @@ def section_2_8(csv_file, cursor):
 
 
 def section_3_1(csv_file, cursor):
+    file.seek(0)
     print('Section 3.1 ----')
-    lines = (445, 15)
+    lines = locate_table(csv_file, '3.1')
     aux_fields = {
         'institution': [3, 0],
         'supervision_type': [4, 0],
@@ -435,7 +438,7 @@ def section_3_1(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -450,8 +453,9 @@ def section_3_1(csv_file, cursor):
 
 
 def section_3_2(csv_file, cursor):
+    file.seek(0)
     print('Section 3.2 ----')
-    lines = (468, 20)
+    lines = locate_table(csv_file, '3.2')
     aux_fields = {
         'institution': [2, 0],
         'postgraduate_level': [3, 0],
@@ -461,7 +465,7 @@ def section_3_2(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 # Separates program from institution from same field in csv.
@@ -487,8 +491,9 @@ def section_3_2(csv_file, cursor):
 
 
 def section_3_3(csv_file, cursor):
+    file.seek(0)
     print('Section 3.3 ----')
-    lines = (494, 10)
+    lines = locate_table(csv_file, '3.3')
     aux_fields = {
         'institution': [2, 0],
         'postgraduate_program': [2, 0],
@@ -497,7 +502,7 @@ def section_3_3(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 # Separates program from institution from same field in csv.
@@ -525,8 +530,9 @@ def section_3_3(csv_file, cursor):
 
 
 def section_3_4(csv_file, cursor):
+    file.seek(0)
     print('Section 3.4 ----')
-    lines = (512, 30)
+    lines = locate_table(csv_file, '3.4')
     aux_fields = {
         'institution': [2, 0],
         'postgraduate_program': [2, 0],
@@ -535,7 +541,7 @@ def section_3_4(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 # Separates program from institution from same field in csv.
@@ -563,8 +569,9 @@ def section_3_4(csv_file, cursor):
 
 
 def section_3_5(csv_file, cursor):
+    file.seek(0)
     print('Section 3.5 ----')
-    lines = (551, 20)
+    lines = locate_table(csv_file, '3.5')
     aux_fields = {
         'course_level': [3, 0],
         'course_classification': [4, 0],
@@ -573,7 +580,7 @@ def section_3_5(csv_file, cursor):
         'researcher': 0,
     }
     for num, row in enumerate(csv_file):
-        if num >= lines[0] - 1 and num < lines[0] - 1 + lines[1]:
+        if num >= lines[0] and num < lines[0]  + lines[1]:
             if row[1]:
                 print(row)
                 for field in aux_fields:
@@ -674,6 +681,31 @@ def insert_complex(cursor, table, data):
     print(data)
     cursor.execute(inserts[table], data)
     return cursor.lastrowid
+
+
+def locate_table(csv_file, match):
+    print('-----------Find table----------------')
+    result = [0, 0]
+    found = False
+    found_id = False
+    for n, row in enumerate(csv_file):
+        if not found and re.search('^' + match + '. ', row[1]):
+            print('match > ', n, row)
+            found = True
+        elif found:
+            if row[0] == 'ID':
+                print('id > ', n, row)
+                found_id = True
+                result[0] = n + 1
+            elif row[0] == '' and found_id:
+                print('empty > ', n, row)
+                result[1] = n - result[0]
+                print('result > ', result)
+                break
+
+    print('-----------Find table--end---------')
+    file.seek(0)
+    return result
 
 
 main()
