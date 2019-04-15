@@ -61,6 +61,7 @@ def main():
     section_3_4(csv_file, cursor)
     section_3_5(csv_file, cursor)
     section_4_1(csv_file, cursor)
+    section_4_2(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -622,6 +623,36 @@ def section_4_1(csv_file, cursor):
                                                       aux_fields['participation_type'][1], aux_fields['aid_agency'][1], row[5], row[6], row[7]))
 
 
+def section_4_2(csv_file, cursor):
+    file.seek(0)
+    print('Section 4.2 ----')
+    lines = locate_table(csv_file, '4.2')
+    aux_fields = {
+        'aid_agency': [4, 0],
+    }
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] and num < lines[0] + lines[1]:
+            if row[1]:
+                print(row)
+                for field in aux_fields:
+                    aux_fields[field][1] = (insert_aux(
+                        cursor, field, row[aux_fields[field][0]]))
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+
+                new_process = row[2] == 'Processo novo'
+
+                insert_complex(cursor, 'contracted_value', (
+                    fk_ids['researcher'], new_process, row[3], aux_fields['aid_agency'][1], row[5], row[6], row[7], year))
+
+
+
+
 def insert_aux(cursor, query, data):
     inserts = {
         'title': 'INSERT INTO `scientiometer`.`title` (`id`, `title`) VALUES (NULL, %s);',
@@ -712,6 +743,8 @@ def insert_complex(cursor, table, data):
         'lectures': 'INSERT INTO `scientiometer`.`discipline_lectures_ministered` (`id`, `researcher_employee_id`, `postgraduate_program_id`, `institution_id`, `discipline_name`, `n_classes`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'coordination_course': 'INSERT INTO `scientiometer`.`coordination_of_course` (`id`, `researcher_employee_id`, `course_name`, `course_level_id`, `course_classification_id`, `workload`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'active_aid': 'INSERT INTO `scientiometer`.`active_aid` (`id`, `granted_researcher_id`, `project_type_id`, `participation_type_id`, `aid_agency_id`, `process_number`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s);',
+        'contracted_value': 'INSERT INTO `scientiometer`.`contracted_value` (`id`, `granted_researcher`, `new_process`, `process_number`, `aid_agency_id`, `value_BRL`, `value_USD`, `validity_end`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
+        'scholarship': 'INSERT INTO `scientiometer`.`scholarship` (`id`, `intern_id`, `scholarship_agency_id`, `process_number`, `total_value_BRL`, `total_value_USD`, `technical_reserve_BRL`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
     }
     print(data)
     cursor.execute(inserts[table], data)
