@@ -565,9 +565,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`course_classification` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `classificaton` VARCHAR(45) NOT NULL,
+  `classification` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `classificaton_UNIQUE` (`classificaton` ASC) VISIBLE)
+  UNIQUE INDEX `classificaton_UNIQUE` (`classification` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
