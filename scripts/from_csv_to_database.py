@@ -35,7 +35,7 @@ def main():
         user=db_user,
         passwd=db_passwd
     )
-    cursor = conn.cursor()
+    cursor = conn.cursor(buffered=True)
 
     global file
     file = open("rel.csv")
@@ -62,6 +62,7 @@ def main():
     section_3_5(csv_file, cursor)
     section_4_1(csv_file, cursor)
     section_4_2(csv_file, cursor)
+    section_4_3(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -641,16 +642,45 @@ def section_4_2(csv_file, cursor):
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
 
-                cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                cursor.execute('SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 new_process = row[2] == 'Processo novo'
 
                 insert_complex(cursor, 'contracted_value', (
-                    fk_ids['researcher'], new_process, row[3], aux_fields['aid_agency'][1], row[5], row[6], row[7], year))
+                fk_ids['researcher'], new_process, row[3],
+                aux_fields['aid_agency'][1], row[5], row[6], row[7], year))
 
 
+def section_4_3(csv_file, cursor):
+    file.seek(0)
+    print('Section 4.3 ----')
+    lines = locate_table(csv_file, '4.3')
+    aux_fields = {
+        'aid_agency': [4, 0],
+    }
+    fk_ids = {
+        'researcher': 0,
+        'intern': [],
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] and num < lines[0] + lines[1]:
+            if row[1]:
+                print(row)
+                for field in aux_fields:
+                    aux_fields[field][1] = (insert_aux(
+                        cursor, field, row[aux_fields[field][0]]))
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+
+                cursor.execute(
+                    'SELECT id, validity_start, validity_end FROM scientiometer.intern WHERE name = %s;', row[1:2])
+                fk_ids['intern'] = cursor.fetchone()
+
+                insert_complex(cursor, 'scholarship', (fk_ids['intern'][0], aux_fields['aid_agency']
+                                                       [1], row[3], row[5], row[6], row[7], fk_ids['intern'][1], fk_ids['intern'][2]))
 
 
 def insert_aux(cursor, query, data):
