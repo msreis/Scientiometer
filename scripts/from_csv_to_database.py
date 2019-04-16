@@ -66,6 +66,7 @@ def main():
     section_5_1(csv_file, cursor)
     section_5_2(csv_file, cursor)
     section_5_3(csv_file, cursor)
+    section_5_4(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -740,6 +741,24 @@ def section_5_3(csv_file, cursor):
 
                 insert_complex(cursor, 'innovation_activity', (fk_ids['researcher'], row[2], row[3], year))
 
+def section_5_4(csv_file, cursor):
+    file.seek(0)
+    print('Section 5.4 ----')
+    lines = locate_table(csv_file, '5.4')
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] and num < lines[0] + lines[1]:
+            if row[1]:
+                print(row)
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+
+                insert_complex(cursor, 'service_provision', (fk_ids['researcher'], row[2], row[3], year))
+
 def insert_aux(cursor, query, data):
     inserts = {
         'title': 'INSERT INTO `scientiometer`.`title` (`id`, `title`) VALUES (NULL, %s);',
@@ -833,7 +852,8 @@ def insert_complex(cursor, table, data):
         'scholarship': 'INSERT INTO `scientiometer`.`scholarship` (`id`, `intern_id`, `scholarship_agency_id`, `process_number`, `total_value_BRL`, `total_value_USD`, `technical_reserve_BRL`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'institutional_activity': 'INSERT INTO `scientiometer`.`institutional_activity` (`id`, `researcher_employee_id`, `activity`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
         'cultural_activity': 'INSERT INTO `scientiometer`.`cultural_activity` (`id`, `researcher_employee_id`, `participation_type`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
-        'innovation_activity': 'INSERT INTO `scientiometer`.`innovation_activity` (`id`, `researcher_employee_id`, `participation_type`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);'
+        'innovation_activity': 'INSERT INTO `scientiometer`.`innovation_activity` (`id`, `researcher_employee_id`, `participation_type`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
+        'service_provision': 'INSERT INTO `scientiometer`.`service_provision` (`id`, `researcher_employee_id`, `service_provisioned`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
     }
     print(data)
     cursor.execute(inserts[table], data)
