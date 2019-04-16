@@ -35,7 +35,7 @@ def main():
         user=db_user,
         passwd=db_passwd
     )
-    cursor = conn.cursor(buffered=True)
+    cursor = conn.cursor()
 
     global file
     file = open("rel.csv")
@@ -63,6 +63,7 @@ def main():
     section_4_1(csv_file, cursor)
     section_4_2(csv_file, cursor)
     section_4_3(csv_file, cursor)
+    section_5_1(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -642,14 +643,14 @@ def section_4_2(csv_file, cursor):
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
 
-                cursor.execute('SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 new_process = row[2] == 'Processo novo'
 
                 insert_complex(cursor, 'contracted_value', (
-                fk_ids['researcher'], new_process, row[3],
-                aux_fields['aid_agency'][1], row[5], row[6], row[7], year))
+                    fk_ids['researcher'], new_process, row[3], aux_fields['aid_agency'][1], row[5], row[6], row[7], year))
 
 
 def section_4_3(csv_file, cursor):
@@ -676,11 +677,30 @@ def section_4_3(csv_file, cursor):
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 cursor.execute(
-                    'SELECT id, validity_start, validity_end FROM scientiometer.intern WHERE name = %s;', row[1:2])
+                    'SELECT id, validity_start, validity_end FROM scientiometer.intern WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['intern'] = cursor.fetchone()
 
                 insert_complex(cursor, 'scholarship', (fk_ids['intern'][0], aux_fields['aid_agency']
                                                        [1], row[3], row[5], row[6], row[7], fk_ids['intern'][1], fk_ids['intern'][2]))
+
+
+def section_5_1(csv_file, cursor):
+    file.seek(0)
+    print('Section 5.1 ----')
+    lines = locate_table(csv_file, '5.1')
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] and num < lines[0] + lines[1]:
+            if row[1]:
+                print(row)
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+
+                insert_complex(cursor, 'institutional_activity', (fk_ids['researcher'], row[2], row[3], year))
 
 
 def insert_aux(cursor, query, data):
@@ -775,6 +795,7 @@ def insert_complex(cursor, table, data):
         'active_aid': 'INSERT INTO `scientiometer`.`active_aid` (`id`, `granted_researcher_id`, `project_type_id`, `participation_type_id`, `aid_agency_id`, `process_number`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s);',
         'contracted_value': 'INSERT INTO `scientiometer`.`contracted_value` (`id`, `granted_researcher`, `new_process`, `process_number`, `aid_agency_id`, `value_BRL`, `value_USD`, `validity_end`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'scholarship': 'INSERT INTO `scientiometer`.`scholarship` (`id`, `intern_id`, `scholarship_agency_id`, `process_number`, `total_value_BRL`, `total_value_USD`, `technical_reserve_BRL`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
+        'institutional_activity': 'INSERT INTO `scientiometer`.`institutional_activities` (`id`, `researcher_employee_id`, `activity`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);'
     }
     print(data)
     cursor.execute(inserts[table], data)
