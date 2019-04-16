@@ -739,7 +739,7 @@ ENGINE = InnoDB;
 -- Table `scientiometer`.`institutional_activities`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`institutional_activities` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `researcher_employee_id` INT NOT NULL,
   `activity` VARCHAR(45) NOT NULL,
   `duration` INT NOT NULL,
@@ -758,7 +758,7 @@ ENGINE = InnoDB;
 -- Table `scientiometer`.`cultural_activities`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`cultural_activities` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `researcher_employee_id` INT NOT NULL,
   `participation_type` VARCHAR(45) NOT NULL,
   `duration` INT NOT NULL,
@@ -777,7 +777,7 @@ ENGINE = InnoDB;
 -- Table `scientiometer`.`innovation_activities`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`innovation_activities` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `researcher_employee_id` INT NOT NULL,
   `participation_type` VARCHAR(45) NOT NULL,
   `duration` INT NOT NULL,
@@ -796,7 +796,7 @@ ENGINE = InnoDB;
 -- Table `scientiometer`.`service_provision`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`service_provision` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `researcher_employee_id` INT NOT NULL,
   `service_provisioned` VARCHAR(45) NOT NULL,
   `duration` INT NOT NULL,
