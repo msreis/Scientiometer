@@ -67,6 +67,7 @@ def main():
     section_5_2(csv_file, cursor)
     section_5_3(csv_file, cursor)
     section_5_4(csv_file, cursor)
+    section_6_0(csv_file, cursor)
 
     conn.commit()
     conn.close()
@@ -76,7 +77,7 @@ def section_1_1(csv_file, cursor):
     file.seek(0)
     print('Section 1.1 ----')
     # TODO: find start line automatically
-    lines = locate_table(csv_file, '1.1')
+    lines = locate_table(csv_file, '1.1.')
     file.seek(0)
     aux_fields = {
         'role': [2, 0],
@@ -120,7 +121,7 @@ def section_1_1(csv_file, cursor):
 def section_1_2(csv_file, cursor):
     file.seek(0)
     print('Section 1.2 ----')
-    lines = locate_table(csv_file, '1.2')
+    lines = locate_table(csv_file, '1.2.')
     aux_fields = {
         'role': [2, 0],
         'title': [3, 0],
@@ -140,7 +141,7 @@ def section_1_2(csv_file, cursor):
 def section_1_3(csv_file, cursor):
     file.seek(0)
     print('Section 1.3 ----')
-    lines = locate_table(csv_file, '1.3')
+    lines = locate_table(csv_file, '1.3.')
     aux_fields = {
         'role': [2, 0],
         'title': [3, 0],
@@ -160,7 +161,7 @@ def section_1_3(csv_file, cursor):
 def section_1_4(csv_file, cursor):
     file.seek(0)
     print('Section 1.4 ----')
-    lines = locate_table(csv_file, '1.4')
+    lines = locate_table(csv_file, '1.4.')
     aux_fields = {
         'internship_level': [3, 0],
     }
@@ -188,7 +189,7 @@ def section_1_4(csv_file, cursor):
 def section_1_5(csv_file, cursor):
     file.seek(0)
     print('Section 1.5 ----')
-    lines = locate_table(csv_file, '1.5')
+    lines = locate_table(csv_file, '1.5.')
     aux_fields = {
         'internship_level': [3, 0],
     }
@@ -215,7 +216,7 @@ def section_1_5(csv_file, cursor):
 def section_1_6(csv_file, cursor):
     file.seek(0)
     print('Section 1.6 ----')
-    lines = locate_table(csv_file, '1.6')
+    lines = locate_table(csv_file, '1.6.')
     aux_fields = {
         'cnpq_level': [2, 0],
     }
@@ -241,7 +242,7 @@ def section_1_6(csv_file, cursor):
 def section_2_1(csv_file, cursor):
     file.seek(0)
     print('Section 2.1 ----')
-    lines = locate_table(csv_file, '2.1')
+    lines = locate_table(csv_file, '2.1.')
     aux_fields = {
         'qualis': [3, 0],
         'collab_type': [4, 0],
@@ -261,7 +262,7 @@ def section_2_1(csv_file, cursor):
 def section_2_2(csv_file, cursor):
     file.seek(0)
     print('Section 2.2 ----')
-    lines = locate_table(csv_file, '2.2')
+    lines = locate_table(csv_file, '2.2.')
     aux_fields = {
         'collab_type': [4, 0],
     }
@@ -280,7 +281,7 @@ def section_2_2(csv_file, cursor):
 def section_2_3(csv_file, cursor):
     file.seek(0)
     print('Section 2.3 ----')
-    lines = locate_table(csv_file, '2.3')
+    lines = locate_table(csv_file, '2.3.')
     fk_ids = {
         'researcher': 0,
     }
@@ -299,7 +300,7 @@ def section_2_3(csv_file, cursor):
 def section_2_4(csv_file, cursor):
     file.seek(0)
     print('Section 2.4 ----')
-    lines = locate_table(csv_file, '2.4')
+    lines = locate_table(csv_file, '2.4.')
     aux_fields = {
         'scholarship_agency': [4, 0],
     }
@@ -323,7 +324,7 @@ def section_2_4(csv_file, cursor):
 def section_2_5(csv_file, cursor):
     file.seek(0)
     print('Section 2.5 ----')
-    lines = locate_table(csv_file, '2.5')
+    lines = locate_table(csv_file, '2.5.')
     aux_fields = {
         'scholarship_agency': [4, 0],
     }
@@ -347,7 +348,7 @@ def section_2_5(csv_file, cursor):
 def section_2_6(csv_file, cursor):
     file.seek(0)
     print('Section 2.6 ----')
-    lines = locate_table(csv_file, '2.6')
+    lines = locate_table(csv_file, '2.6.')
     aux_fields = {
         'scholarship_agency': [4, 0, 0],
     }
@@ -380,7 +381,7 @@ def section_2_6(csv_file, cursor):
 def section_2_7(csv_file, cursor):
     file.seek(0)
     print('Section 2.7 ----')
-    lines = locate_table(csv_file, '2.7')
+    lines = locate_table(csv_file, '2.7.')
     aux_fields = {
         'line_research': [4, 0, 0],
     }
@@ -406,7 +407,7 @@ def section_2_7(csv_file, cursor):
 def section_2_8(csv_file, cursor):
     file.seek(0)
     print('Section 2.8 ----')
-    lines = locate_table(csv_file, '2.8')
+    lines = locate_table(csv_file, '2.8.')
     aux_fields = {
         'participation_role': [4, 0, 0, 0],
     }
@@ -436,7 +437,7 @@ def section_2_8(csv_file, cursor):
 def section_3_1(csv_file, cursor):
     file.seek(0)
     print('Section 3.1 ----')
-    lines = locate_table(csv_file, '3.1')
+    lines = locate_table(csv_file, '3.1.')
     aux_fields = {
         'institution': [3, 0],
         'supervision_type': [4, 0],
@@ -462,7 +463,7 @@ def section_3_1(csv_file, cursor):
 def section_3_2(csv_file, cursor):
     file.seek(0)
     print('Section 3.2 ----')
-    lines = locate_table(csv_file, '3.2')
+    lines = locate_table(csv_file, '3.2.')
     aux_fields = {
         'institution': [2, 0],
         'postgraduate_level': [3, 0],
@@ -500,7 +501,7 @@ def section_3_2(csv_file, cursor):
 def section_3_3(csv_file, cursor):
     file.seek(0)
     print('Section 3.3 ----')
-    lines = locate_table(csv_file, '3.3')
+    lines = locate_table(csv_file, '3.3.')
     aux_fields = {
         'institution': [2, 0],
         'postgraduate_program': [2, 0],
@@ -539,7 +540,7 @@ def section_3_3(csv_file, cursor):
 def section_3_4(csv_file, cursor):
     file.seek(0)
     print('Section 3.4 ----')
-    lines = locate_table(csv_file, '3.4')
+    lines = locate_table(csv_file, '3.4.')
     aux_fields = {
         'institution': [2, 0],
         'postgraduate_program': [2, 0],
@@ -578,7 +579,7 @@ def section_3_4(csv_file, cursor):
 def section_3_5(csv_file, cursor):
     file.seek(0)
     print('Section 3.5 ----')
-    lines = locate_table(csv_file, '3.5')
+    lines = locate_table(csv_file, '3.5.')
     aux_fields = {
         'course_level': [3, 0],
         'course_classification': [4, 0],
@@ -604,7 +605,7 @@ def section_3_5(csv_file, cursor):
 def section_4_1(csv_file, cursor):
     file.seek(0)
     print('Section 4.1 ----')
-    lines = locate_table(csv_file, '4.1')
+    lines = locate_table(csv_file, '4.1.')
     aux_fields = {
         'project_type': [2, 0],
         'participation_type': [3, 0],
@@ -631,7 +632,7 @@ def section_4_1(csv_file, cursor):
 def section_4_2(csv_file, cursor):
     file.seek(0)
     print('Section 4.2 ----')
-    lines = locate_table(csv_file, '4.2')
+    lines = locate_table(csv_file, '4.2.')
     aux_fields = {
         'aid_agency': [4, 0],
     }
@@ -659,7 +660,7 @@ def section_4_2(csv_file, cursor):
 def section_4_3(csv_file, cursor):
     file.seek(0)
     print('Section 4.3 ----')
-    lines = locate_table(csv_file, '4.3')
+    lines = locate_table(csv_file, '4.3.')
     aux_fields = {
         'aid_agency': [4, 0],
     }
@@ -690,7 +691,7 @@ def section_4_3(csv_file, cursor):
 def section_5_1(csv_file, cursor):
     file.seek(0)
     print('Section 5.1 ----')
-    lines = locate_table(csv_file, '5.1')
+    lines = locate_table(csv_file, '5.1.')
     fk_ids = {
         'researcher': 0,
     }
@@ -708,7 +709,7 @@ def section_5_1(csv_file, cursor):
 def section_5_2(csv_file, cursor):
     file.seek(0)
     print('Section 5.2 ----')
-    lines = locate_table(csv_file, '5.2')
+    lines = locate_table(csv_file, '5.2.')
     fk_ids = {
         'researcher': 0,
     }
@@ -726,7 +727,7 @@ def section_5_2(csv_file, cursor):
 def section_5_3(csv_file, cursor):
     file.seek(0)
     print('Section 5.3 ----')
-    lines = locate_table(csv_file, '5.3')
+    lines = locate_table(csv_file, '5.3.')
     fk_ids = {
         'researcher': 0,
     }
@@ -744,7 +745,7 @@ def section_5_3(csv_file, cursor):
 def section_5_4(csv_file, cursor):
     file.seek(0)
     print('Section 5.4 ----')
-    lines = locate_table(csv_file, '5.4')
+    lines = locate_table(csv_file, '5.4.')
     fk_ids = {
         'researcher': 0,
     }
@@ -758,6 +759,24 @@ def section_5_4(csv_file, cursor):
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 insert_complex(cursor, 'service_provision', (fk_ids['researcher'], row[2], row[3], year))
+
+def section_6_0(csv_file, cursor):
+    file.seek(0)
+    print('Section 6.0 ----')
+    lines = locate_table(csv_file, '6 – ')
+    fk_ids = {
+        'researcher': 0,
+    }
+    for num, row in enumerate(csv_file):
+        if num >= lines[0] and num < lines[0] + lines[1]:
+            if row[1]:
+                print(row)
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                fk_ids['researcher'] = cursor.fetchone()[0]
+
+                insert_complex(cursor, 'note', (fk_ids['researcher'], row[2], year))
 
 def insert_aux(cursor, query, data):
     inserts = {
@@ -854,6 +873,7 @@ def insert_complex(cursor, table, data):
         'cultural_activity': 'INSERT INTO `scientiometer`.`cultural_activity` (`id`, `researcher_employee_id`, `participation_type`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
         'innovation_activity': 'INSERT INTO `scientiometer`.`innovation_activity` (`id`, `researcher_employee_id`, `participation_type`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
         'service_provision': 'INSERT INTO `scientiometer`.`service_provision` (`id`, `researcher_employee_id`, `service_provisioned`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
+        'note': 'INSERT INTO `scientiometer`.`note` (`id`, `researcher_employee_id`, `note`, `year`) VALUES (NULL, %s, %s, %s);'
     }
     print(data)
     cursor.execute(inserts[table], data)
@@ -866,7 +886,7 @@ def locate_table(csv_file, match):
     found = False
     found_id = False
     for n, row in enumerate(csv_file):
-        if not found and re.search('^' + match + '. ', row[1]):
+        if not found and (re.search('^' + match, row[1]) or re.search('^' + match, row[0])):
             print('match > ', n, row)
             found = True
         elif found:
