@@ -1,6 +1,7 @@
 import mysql.connector
 import csv
 import re
+import datetime as dt
 
 db_host = "localhost"
 db_user = "root"
@@ -16,13 +17,34 @@ lab_name = ['lab 1', 0]
 lab_div = 'div 1'
 
 abbreviations = {
-    'DR': ['Doutorado'],
-    'MS': ['Mestrado'],
-    'G': ['Graduação'],
-    'NM': ['Nível Médio'],
-    'PDN': ['Pós-doutorado Nacional'],
-    'PDE': ['Pós-doutorado Exterior'],
-    'N/A': ['Não Possui'],
+    #     'DR': ['Doutorado'],
+    #     'MS': ['Mestrado'],
+    #     'G': ['Graduação'],
+    #     'NM': ['Nível Médio'],
+    #     'PDN': ['Pós-doutorado Nacional'],
+    #     'PDE': ['Pós-doutorado Exterior'],
+    #     'N/A': ['Não Possui'],
+    #     'T':['Técnico Nível Médio'],
+    #     'IC':['Iniciação Científica'],
+    #     'PD': ['Pós-doutorado'],
+    #     'AP':['Aperfeiçoamento'],
+    #     'TT1':['Treinamento Técnico 1'],
+    #     'TT2':['Treinamento Técnico 2'],
+    #     'TT3':['Treinamento Técnico 3'],
+    #     'TT4':['Treinamento Técnico 4'],
+    #     'TT5':['Treinamento Técnico 5'],
+    #     'PM':['Palestra Magna'],
+    #     'CO':['Comunicação Oral'],
+    #     'AP':['Poster'],
+    #     'CS':['Coordenação de Seção'],
+    #     'MR':['Mesa Redonda'],
+    #     'CE':['Coordenação do Evento'],
+    #     'TCC':['Trabalho de Conclusão de Curso'],
+    #     'E':['Extensão Uniersitária'],
+    #     'D':['Difusão'],
+    #     'I':['Publico Geral'],
+    #     'II':['Graduandos'],
+    #     'III':['Pós-graduandos'],
 }
 
 # We need to seek the file in each section
@@ -38,7 +60,7 @@ def main():
     cursor = conn.cursor()
 
     global file
-    file = open("rel.csv")
+    file = open("../data/2018.csv")
     csv_file = csv.reader(file, delimiter='|')
 
     section_1_1(csv_file, cursor)
@@ -76,7 +98,6 @@ def main():
 def section_1_1(csv_file, cursor):
     file.seek(0)
     print('Section 1.1 ----')
-    # TODO: find start line automatically
     lines = locate_table(csv_file, '1.1.')
     file.seek(0)
     aux_fields = {
@@ -109,13 +130,24 @@ def section_1_1(csv_file, cursor):
                     fk_ids['lab'] = fk_ids['lab'][0]
                 lab_name[1] = fk_ids['lab']
 
-                # TODO: handle foundation employee (level i-vi), ingress date and email
+                # TODO: handle email
+
+                # Handle if is a state employee
+                is_state = row[7] != ''
+
+                # Handle ingress date
+                if is_state:
+                    date_admission = dt.datetime.strptime(row[7], '%d/%m/%Y')
+                else:
+                    date_admission = dt.datetime.strptime(row[15], '%d/%m/%Y')
+
                 # insert employee
                 fk_ids['employee'] = insert_complex(
-                    cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], 0, fk_ids['lab']))
+                    cursor, 'employee', (row[1], aux_fields['role'][1], aux_fields['title'][1], is_state, fk_ids['lab']))
+
                 # insert researcher
                 insert_complex(
-                    cursor, 'researcher', (fk_ids['employee'], aux_fields['postdoc'][1], row[5], row[6], '2019/01/01', '', 0))
+                    cursor, 'researcher', (fk_ids['employee'], aux_fields['postdoc'][1], row[5], row[6], date_admission, '', 0))
 
 
 def section_1_2(csv_file, cursor):
@@ -177,6 +209,7 @@ def section_1_4(csv_file, cursor):
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
 
+                #TODO: use this agency or the one in scholharships?
                 # insert intern
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
@@ -369,11 +402,11 @@ def section_2_6(csv_file, cursor):
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
+
+                # HACK: insert two rows, one for foundation and one for CNPq
                 insert_complex(cursor, 'article_student_postdoc', (
                     fk_ids['researcher'], aux_fields['scholarship_agency'][1], row[2], row[3], row[5], row[6], row[7], year))
-                cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
-                fk_ids['researcher'] = cursor.fetchone()[0]
+
                 insert_complex(cursor, 'article_student_postdoc', (
                     fk_ids['researcher'], aux_fields['scholarship_agency'][2], row[2], row[4], row[5], row[6], row[7], year))
 
@@ -704,7 +737,9 @@ def section_5_1(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
-                insert_complex(cursor, 'institutional_activity', (fk_ids['researcher'], row[2], row[3], year))
+                insert_complex(cursor, 'institutional_activity',
+                               (fk_ids['researcher'], row[2], row[3], year))
+
 
 def section_5_2(csv_file, cursor):
     file.seek(0)
@@ -722,7 +757,9 @@ def section_5_2(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
-                insert_complex(cursor, 'cultural_activity', (fk_ids['researcher'], row[2], row[3], year))
+                insert_complex(cursor, 'cultural_activity',
+                               (fk_ids['researcher'], row[2], row[3], year))
+
 
 def section_5_3(csv_file, cursor):
     file.seek(0)
@@ -740,7 +777,9 @@ def section_5_3(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
-                insert_complex(cursor, 'innovation_activity', (fk_ids['researcher'], row[2], row[3], year))
+                insert_complex(cursor, 'innovation_activity',
+                               (fk_ids['researcher'], row[2], row[3], year))
+
 
 def section_5_4(csv_file, cursor):
     file.seek(0)
@@ -758,7 +797,9 @@ def section_5_4(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
-                insert_complex(cursor, 'service_provision', (fk_ids['researcher'], row[2], row[3], year))
+                insert_complex(cursor, 'service_provision',
+                               (fk_ids['researcher'], row[2], row[3], year))
+
 
 def section_6_0(csv_file, cursor):
     file.seek(0)
@@ -776,7 +817,9 @@ def section_6_0(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
-                insert_complex(cursor, 'note', (fk_ids['researcher'], row[2], year))
+                insert_complex(
+                    cursor, 'note', (fk_ids['researcher'], row[2], year))
+
 
 def insert_aux(cursor, query, data):
     inserts = {
@@ -897,9 +940,12 @@ def locate_table(csv_file, match):
             elif row[0] == '' and found_id:
                 print('empty > ', n, row)
                 result[1] = n - result[0]
-                print('result > ', result)
                 break
 
+    if result[1] == 0:
+        result[1] = n + 1 - result[0]
+
+    print('result > ', result)
     print('-----------Find table--end---------')
     file.seek(0)
     return result
