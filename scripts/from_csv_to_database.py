@@ -175,7 +175,7 @@ def section_1_1(csv_file, cursor):
 
                 # Handle ingress date
                 if is_state:
-                    date_admission = dt.datetime.strptime(row[7], '%d/%m/%Y')
+                    date_admission = dt.datetime.strptime(row[7], '%Y-%m-%d')
                 else:
                     # date_admission = dt.datetime.strptime(row[15], '%d/%m/%Y')
                     date_admission = None
