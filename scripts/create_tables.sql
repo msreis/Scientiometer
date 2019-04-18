@@ -119,10 +119,12 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`researcher` (
   `ingress_date` DATE NOT NULL,
   `email` VARCHAR(60) NOT NULL,
   `lab_director` TINYINT NOT NULL,
+  `code` VARCHAR(45) NULL,
   UNIQUE INDEX `researcher_id_UNIQUE` (`researcher_id` ASC) VISIBLE,
   UNIQUE INDEX `orcid_UNIQUE` (`orcid` ASC) VISIBLE,
   PRIMARY KEY (`employee_id`),
   INDEX `fk_researcher_post_doctoral1_idx` (`post_doctoral_type_id` ASC) VISIBLE,
+  UNIQUE INDEX `code_UNIQUE` (`code` ASC) VISIBLE,
   CONSTRAINT `fk_researcher_employee1`
     FOREIGN KEY (`employee_id`)
     REFERENCES `scientiometer`.`employee` (`id`)
@@ -909,7 +911,7 @@ USE `scientiometer` ;
 -- -----------------------------------------------------
 -- Placeholder table for view `scientiometer`.`researcher_data`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scientiometer`.`researcher_data` (`employee_id` INT, `post_doctoral_type_id` INT, `researcher_id` INT, `orcid` INT, `ingress_date` INT, `email` INT, `lab_director` INT, `id` INT, `name` INT, `role_foundation_or_pq_level_id` INT, `title_id` INT, `foundation_employee` INT, `laboratory_id` INT);
+CREATE TABLE IF NOT EXISTS `scientiometer`.`researcher_data` (`employee_id` INT, `post_doctoral_type_id` INT, `researcher_id` INT, `orcid` INT, `ingress_date` INT, `email` INT, `lab_director` INT, `code` INT, `id` INT, `name` INT, `role_foundation_or_pq_level_id` INT, `title_id` INT, `foundation_employee` INT, `laboratory_id` INT);
 
 -- -----------------------------------------------------
 -- View `scientiometer`.`researcher_data`
