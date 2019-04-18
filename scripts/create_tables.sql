@@ -377,7 +377,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`institution` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `institution_name` VARCHAR(45) NOT NULL,
+  `institution_name` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `institution_name_UNIQUE` (`institution_name` ASC) VISIBLE)
 ENGINE = InnoDB;
@@ -388,7 +388,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`supervision_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `type_description` VARCHAR(45) NOT NULL,
+  `type_description` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `type_description_UNIQUE` (`type_description` ASC) VISIBLE)
 ENGINE = InnoDB;
@@ -431,7 +431,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`postgraduate_program` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `program_name` VARCHAR(45) NOT NULL,
+  `program_name` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `program_name_UNIQUE` (`program_name` ASC) VISIBLE)
 ENGINE = InnoDB;
