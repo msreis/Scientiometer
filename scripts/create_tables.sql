@@ -114,8 +114,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`researcher` (
   `employee_id` INT NOT NULL,
   `post_doctoral_type_id` INT NOT NULL,
-  `researcher_id` VARCHAR(9) NOT NULL,
-  `orcid` VARCHAR(16) NOT NULL,
+  `researcher_id` VARCHAR(12) NOT NULL,
+  `orcid` VARCHAR(20) NOT NULL,
   `ingress_date` DATE NULL,
   `email` VARCHAR(60) NOT NULL,
   `lab_director` TINYINT NOT NULL,
