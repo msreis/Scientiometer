@@ -362,6 +362,10 @@ def section_2_3(csv_file, cursor):
             if row[1]:
                 print(row)
 
+                for col, _ in enumerate(row):
+                    if row[col] == '':
+                        row[col] = 0
+
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
