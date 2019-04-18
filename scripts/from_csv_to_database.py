@@ -1,7 +1,11 @@
+#!/bin/python3
+
 import mysql.connector
 import csv
+import sys
 import re
 import datetime as dt
+import getopt
 
 db_host = "localhost"
 db_user = "root"
@@ -58,10 +62,43 @@ def main():
         passwd=db_passwd
     )
     cursor = conn.cursor()
+    try:
+        optlist, args = getopt.gnu_getopt(
+            sys.argv[1:], 'y:f:l:d:h', ['year=', 'file=', 'lab=', 'div=', 'delimiter=', 'help'])
 
+    except getopt.GetoptError as err:
+        print(err)
+
+    global year
+    global lab_name
+    global lab_div
     global file
-    file = open("../data/2018.csv")
-    csv_file = csv.reader(file, delimiter='|')
+
+    delim = '|'
+
+    for opt, arg in optlist:
+        if opt in ('-y', '--year'):
+            year = arg
+
+        elif opt in ('-f', '--file'):
+            file_name = arg
+
+        elif opt in ('-l', '--lab'):
+            lab_name[0] = arg
+
+        elif opt in ('-d', '--delimiter'):
+            delim = arg
+
+        elif opt == '--div':
+            lab_div = arg
+        elif opt in ('-h', '--help'):
+            print('Usage: script.py [-y | --year] <year> [-f | --file] <file>\
+[-l| --lab] <lab name> [--div] <lab division> [-d | --delimiter]\
+<csv delimiter> [-h | --help]')
+            sys.exit(2)
+
+    file = open(file_name)
+    csv_file = csv.reader(file, delimiter=delim)
 
     section_1_1(csv_file, cursor)
     section_1_2(csv_file, cursor)
@@ -130,7 +167,7 @@ def section_1_1(csv_file, cursor):
                     fk_ids['lab'] = fk_ids['lab'][0]
                 lab_name[1] = fk_ids['lab']
 
-                # TODO: handle email
+                # TODO: handle email adn code
 
                 # Handle if is a state employee
                 is_state = row[7] != ''
@@ -209,7 +246,7 @@ def section_1_4(csv_file, cursor):
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
 
-                #TODO: use this agency or the one in scholharships?
+                # TODO: use this agency or the one in scholharships?
                 # insert intern
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
@@ -397,8 +434,6 @@ def section_2_6(csv_file, cursor):
                 aux_fields['scholarship_agency'][2] = insert_aux(
                     cursor, 'scholarship_agency', 'FB')
 
-                # TODO: is this correct? The number of publications is
-                # duplicated, or is it the sum of cnpq and fb?
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
