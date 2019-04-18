@@ -733,6 +733,9 @@ def section_4_2(csv_file, cursor):
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
 
+                for col, _ in enumerate(row):
+                    if row[col] == '':
+                        row[col] = 0
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
@@ -761,6 +764,10 @@ def section_4_3(csv_file, cursor):
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
+
+                for col, _ in enumerate(row):
+                    if row[col] == '':
+                        row[col] = 0
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
