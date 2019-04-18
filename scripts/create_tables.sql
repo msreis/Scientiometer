@@ -177,17 +177,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `scientiometer`.`scholarship_agency`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scientiometer`.`scholarship_agency` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `agency` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `agency_UNIQUE` (`agency` ASC) VISIBLE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `scientiometer`.`cnpq_level`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`cnpq_level` (
@@ -246,12 +235,23 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `scientiometer`.`funding_agency`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `scientiometer`.`funding_agency` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `agency_name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `agency_name_UNIQUE` (`agency_name` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `scientiometer`.`article_student_postdoc`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`article_student_postdoc` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `researcher_employee_id` INT NOT NULL,
-  `scholarship_agency_id` INT NOT NULL,
+  `funding_agency_id` INT NOT NULL,
   `n_intl_collab` INT NOT NULL,
   `n_sci_initiation` INT NOT NULL,
   `n_msc_student` INT NOT NULL,
@@ -260,15 +260,15 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`article_student_postdoc` (
   `year` YEAR(4) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_article_sci_initiation_postdoc_researcher1_idx` (`researcher_employee_id` ASC) VISIBLE,
-  INDEX `fk_article_sci_initiation_postdoc_scholarship_agency1_idx` (`scholarship_agency_id` ASC) VISIBLE,
+  INDEX `fk_article_student_postdoc_aid_agency1_idx` (`funding_agency_id` ASC) VISIBLE,
   CONSTRAINT `fk_article_sci_initiation_postdoc_researcher1`
     FOREIGN KEY (`researcher_employee_id`)
     REFERENCES `scientiometer`.`researcher` (`employee_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_article_sci_initiation_postdoc_scholarship_agency1`
-    FOREIGN KEY (`scholarship_agency_id`)
-    REFERENCES `scientiometer`.`scholarship_agency` (`id`)
+  CONSTRAINT `fk_article_student_postdoc_funding_agency1`
+    FOREIGN KEY (`funding_agency_id`)
+    REFERENCES `scientiometer`.`funding_agency` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -629,17 +629,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `scientiometer`.`aid_agency`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scientiometer`.`aid_agency` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `agency_name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `agency_name_UNIQUE` (`agency_name` ASC) VISIBLE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `scientiometer`.`active_aid`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`active_aid` (
@@ -647,7 +636,7 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`active_aid` (
   `granted_researcher_id` INT NOT NULL,
   `project_type_id` INT NOT NULL,
   `participation_type_id` INT NOT NULL,
-  `aid_agency_id` INT NOT NULL,
+  `funding_agency_id` INT NOT NULL,
   `process_number` VARCHAR(45) NOT NULL,
   `validity_start` YEAR(4) NOT NULL,
   `validity_end` YEAR(4) NULL,
@@ -655,7 +644,7 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`active_aid` (
   INDEX `fk_active_aid_researcher1_idx` (`granted_researcher_id` ASC) VISIBLE,
   INDEX `fk_active_aid_project_type1_idx` (`project_type_id` ASC) VISIBLE,
   INDEX `fk_active_aid_participation_type1_idx` (`participation_type_id` ASC) VISIBLE,
-  INDEX `fk_active_aid_aid_agency1_idx` (`aid_agency_id` ASC) VISIBLE,
+  INDEX `fk_active_aid_aid_agency1_idx` (`funding_agency_id` ASC) VISIBLE,
   CONSTRAINT `fk_active_aid_researcher1`
     FOREIGN KEY (`granted_researcher_id`)
     REFERENCES `scientiometer`.`researcher` (`employee_id`)
@@ -671,9 +660,9 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`active_aid` (
     REFERENCES `scientiometer`.`participation_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_active_aid_aid_agency1`
-    FOREIGN KEY (`aid_agency_id`)
-    REFERENCES `scientiometer`.`aid_agency` (`id`)
+  CONSTRAINT `fk_active_aid_funding_agency1`
+    FOREIGN KEY (`funding_agency_id`)
+    REFERENCES `scientiometer`.`funding_agency` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -687,22 +676,22 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`contracted_value` (
   `granted_researcher` INT NOT NULL,
   `new_process` TINYINT NOT NULL,
   `process_number` VARCHAR(45) NOT NULL,
-  `aid_agency_id` INT NOT NULL,
+  `funding_agency_id` INT NOT NULL,
   `value_BRL` DECIMAL NOT NULL,
   `value_USD` DECIMAL NOT NULL,
   `validity_end` YEAR(4) NULL,
   `year` YEAR(4) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_contracted_value_researcher1_idx` (`granted_researcher` ASC) VISIBLE,
-  INDEX `fk_contracted_value_aid_agency1_idx` (`aid_agency_id` ASC) VISIBLE,
+  INDEX `fk_contracted_value_aid_agency1_idx` (`funding_agency_id` ASC) VISIBLE,
   CONSTRAINT `fk_contracted_value_researcher1`
     FOREIGN KEY (`granted_researcher`)
     REFERENCES `scientiometer`.`researcher` (`employee_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_contracted_value_aid_agency1`
-    FOREIGN KEY (`aid_agency_id`)
-    REFERENCES `scientiometer`.`aid_agency` (`id`)
+  CONSTRAINT `fk_contracted_value_funding_agency1`
+    FOREIGN KEY (`funding_agency_id`)
+    REFERENCES `scientiometer`.`funding_agency` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -714,7 +703,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`scholarship` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `intern_id` INT NOT NULL,
-  `scholarship_agency_id` INT NOT NULL,
+  `funding_agency_id` INT NOT NULL,
   `process_number` VARCHAR(45) NOT NULL,
   `total_value_BRL` DECIMAL NOT NULL,
   `total_value_USD` DECIMAL NOT NULL,
@@ -723,15 +712,15 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`scholarship` (
   `validity_end` YEAR(4) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_table1_intern1_idx` (`intern_id` ASC) VISIBLE,
-  INDEX `fk_table1_scholarship_agency1_idx` (`scholarship_agency_id` ASC) VISIBLE,
+  INDEX `fk_scholarship_aid_agency1_idx` (`funding_agency_id` ASC) VISIBLE,
   CONSTRAINT `fk_table1_intern1`
     FOREIGN KEY (`intern_id`)
     REFERENCES `scientiometer`.`intern` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_table1_scholarship_agency1`
-    FOREIGN KEY (`scholarship_agency_id`)
-    REFERENCES `scientiometer`.`scholarship_agency` (`id`)
+  CONSTRAINT `fk_scholarship_funding_agency1`
+    FOREIGN KEY (`funding_agency_id`)
+    REFERENCES `scientiometer`.`funding_agency` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
