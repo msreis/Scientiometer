@@ -56,12 +56,6 @@ file = None
 
 
 def main():
-    conn = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        passwd=db_passwd
-    )
-    cursor = conn.cursor()
     try:
         optlist, args = getopt.gnu_getopt(
             sys.argv[1:], 'y:f:l:d:h', ['year=', 'file=', 'lab=', 'div=', 'delimiter=', 'help'])
@@ -96,6 +90,13 @@ def main():
 [-l| --lab] <lab name> [--div] <lab division> [-d | --delimiter]\
 <csv delimiter> [-h | --help]')
             sys.exit(2)
+
+    conn = mysql.connector.connect(
+        host=db_host,
+        user=db_user,
+        passwd=db_passwd
+    )
+    cursor = conn.cursor()
 
     file = open(file_name)
     csv_file = csv.reader(file, delimiter=delim)
@@ -176,7 +177,8 @@ def section_1_1(csv_file, cursor):
                 if is_state:
                     date_admission = dt.datetime.strptime(row[7], '%d/%m/%Y')
                 else:
-                    date_admission = dt.datetime.strptime(row[15], '%d/%m/%Y')
+                    # date_admission = dt.datetime.strptime(row[15], '%d/%m/%Y')
+                    date_admission = None
 
                 # insert employee
                 fk_ids['employee'] = insert_complex(
@@ -959,7 +961,6 @@ def insert_complex(cursor, table, data):
 
 
 def locate_table(csv_file, match):
-    print('-----------Find table----------------')
     result = [0, 0]
     found = False
     found_id = False
@@ -980,8 +981,6 @@ def locate_table(csv_file, match):
     if result[1] == 0:
         result[1] = n + 1 - result[0]
 
-    print('result > ', result)
-    print('-----------Find table--end---------')
     file.seek(0)
     return result
 

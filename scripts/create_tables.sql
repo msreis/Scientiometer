@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`researcher` (
   `post_doctoral_type_id` INT NOT NULL,
   `researcher_id` VARCHAR(9) NOT NULL,
   `orcid` VARCHAR(16) NOT NULL,
-  `ingress_date` DATE NOT NULL,
+  `ingress_date` DATE NULL,
   `email` VARCHAR(60) NOT NULL,
   `lab_director` TINYINT NOT NULL,
   `code` VARCHAR(45) NULL,
