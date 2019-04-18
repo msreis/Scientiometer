@@ -390,6 +390,10 @@ def section_2_4(csv_file, cursor):
                 aux_fields['scholarship_agency'][1] = insert_aux(
                     cursor, 'scholarship_agency', 'FAPESP')
 
+                for col, _ in enumerate(row):
+                    if row[col] == '':
+                        row[col] = 0
+
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
@@ -413,6 +417,10 @@ def section_2_5(csv_file, cursor):
                 print(row)
                 aux_fields['scholarship_agency'][1] = insert_aux(
                     cursor, 'scholarship_agency', 'CAPES')
+
+                for col, _ in enumerate(row):
+                    if row[col] == '':
+                        row[col] = 0
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
@@ -439,6 +447,10 @@ def section_2_6(csv_file, cursor):
                     cursor, 'scholarship_agency', 'CNPq')
                 aux_fields['scholarship_agency'][2] = insert_aux(
                     cursor, 'scholarship_agency', 'FB')
+
+                for col, _ in enumerate(row):
+                    if row[col] == '':
+                        row[col] = 0
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
