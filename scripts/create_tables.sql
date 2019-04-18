@@ -193,6 +193,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`productivity_scholarship` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `cnpq_level_id` INT NULL,
+  `fb_level` VARCHAR(1) NULL,
   `validity_start` YEAR(4) NOT NULL,
   `validity_end` YEAR(4) NULL,
   `granted_researcher_id` INT NOT NULL,
