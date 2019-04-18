@@ -54,6 +54,7 @@ abbreviations = {
 # We need to seek the file in each section
 file = None
 
+outfile = None
 
 def main():
     try:
@@ -67,6 +68,7 @@ def main():
     global lab_name
     global lab_div
     global file
+    global outfile
 
     delim = '|'
 
@@ -76,6 +78,7 @@ def main():
 
         elif opt in ('-f', '--file'):
             file_name = arg
+            outfile = open(file_name + '_script.sql', 'w+')
 
         elif opt in ('-l', '--lab'):
             lab_name[0] = arg
@@ -940,7 +943,11 @@ def insert_aux(cursor, query, data):
 
     id = cursor.fetchone()
     if id == None:
-        cursor.execute(inserts[query], value)
+        try:
+            cursor.execute(inserts[query], value)
+        except:
+            print("Failed to insert a ROW")
+        outfile.write(cursor.statement + '\n')
         id = cursor.lastrowid
     else:
         # HACK: the connector returns a tuple even for a single result, so we
@@ -979,7 +986,11 @@ def insert_complex(cursor, table, data):
         'note': 'INSERT INTO `scientiometer`.`note` (`id`, `researcher_employee_id`, `note`, `year`) VALUES (NULL, %s, %s, %s);'
     }
     print(data)
-    cursor.execute(inserts[table], data)
+    try:
+        cursor.execute(inserts[table], data)
+    except:
+        print("Failed to insert a ROW")
+    outfile.write(cursor.statement + '\n')
     return cursor.lastrowid
 
 
