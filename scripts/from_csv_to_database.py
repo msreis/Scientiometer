@@ -329,8 +329,14 @@ def section_2_1(csv_file, cursor):
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
 
+                # Handle empty as null
+                if row[5] == '':
+                    impact_factor = None
+                else:
+                    impact_factor = row[5]
+
                 insert_complex(cursor, 'published_work', (
-                    row[1], row[2], aux_fields['qualis'][1], lab_name[1], aux_fields['collab_type'][1], row[5], year))
+                    row[1], row[2], aux_fields['qualis'][1], lab_name[1], aux_fields['collab_type'][1], impact_factor, year))
 
 
 def section_2_2(csv_file, cursor):
