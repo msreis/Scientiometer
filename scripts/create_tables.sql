@@ -70,7 +70,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`employee` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
   `role_foundation_or_pq_level_id` INT NOT NULL,
   `title_id` INT NOT NULL,
   `foundation_employee` TINYINT NOT NULL,
@@ -140,6 +140,16 @@ PACK_KEYS = DEFAULT;
 
 
 -- -----------------------------------------------------
+-- Table `scientiometer`.`intern`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `scientiometer`.`intern` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `scientiometer`.`internship_level`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `scientiometer`.`internship_level` (
@@ -147,32 +157,6 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`internship_level` (
   `level` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `level_UNIQUE` (`level` ASC) VISIBLE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `scientiometer`.`intern`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scientiometer`.`intern` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NOT NULL,
-  `researcher_employee_id` INT NOT NULL,
-  `internship_level_id` INT NOT NULL,
-  `validity_start` YEAR(4) NOT NULL,
-  `validity_end` YEAR(4) NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_intern_researcher1_idx` (`researcher_employee_id` ASC) VISIBLE,
-  INDEX `fk_intern_internship_level1_idx` (`internship_level_id` ASC) VISIBLE,
-  CONSTRAINT `fk_intern_researcher1`
-    FOREIGN KEY (`researcher_employee_id`)
-    REFERENCES `scientiometer`.`researcher` (`employee_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_intern_internship_level1`
-    FOREIGN KEY (`internship_level_id`)
-    REFERENCES `scientiometer`.`internship_level` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -699,29 +683,60 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `scientiometer`.`scholarship`
+-- Table `scientiometer`.`advising`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `scientiometer`.`scholarship` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `scientiometer`.`advising` (
   `intern_id` INT NOT NULL,
-  `funding_agency_id` INT NOT NULL,
-  `process_number` VARCHAR(45) NOT NULL,
-  `total_value_BRL` DECIMAL NOT NULL,
-  `total_value_USD` DECIMAL NOT NULL,
-  `technical_reserve_BRL` DECIMAL NOT NULL,
+  `researcher_id` INT NOT NULL,
+  `internship_level_id` INT NOT NULL,
   `validity_start` YEAR(4) NOT NULL,
   `validity_end` YEAR(4) NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_table1_intern1_idx` (`intern_id` ASC) VISIBLE,
-  INDEX `fk_scholarship_aid_agency1_idx` (`funding_agency_id` ASC) VISIBLE,
-  CONSTRAINT `fk_table1_intern1`
+  INDEX `fk_intern_researcher_intern1_idx` (`intern_id` ASC) VISIBLE,
+  INDEX `fk_intern_researcher_researcher1_idx` (`researcher_id` ASC) VISIBLE,
+  PRIMARY KEY (`intern_id`, `researcher_id`),
+  INDEX `fk_advising_internship_level1_idx` (`internship_level_id` ASC) VISIBLE,
+  CONSTRAINT `fk_intern_researcher_intern1`
     FOREIGN KEY (`intern_id`)
     REFERENCES `scientiometer`.`intern` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
+  CONSTRAINT `fk_intern_researcher_researcher1`
+    FOREIGN KEY (`researcher_id`)
+    REFERENCES `scientiometer`.`researcher` (`employee_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_advising_internship_level1`
+    FOREIGN KEY (`internship_level_id`)
+    REFERENCES `scientiometer`.`internship_level` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `scientiometer`.`scholarship`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `scientiometer`.`scholarship` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `funding_agency_id` INT NOT NULL,
+  `advising_researcher_id` INT NOT NULL,
+  `advising_intern_id` INT NOT NULL,
+  `process_number` VARCHAR(45) NULL,
+  `total_value_BRL` DECIMAL NOT NULL,
+  `total_value_USD` DECIMAL NOT NULL,
+  `technical_reserve_BRL` DECIMAL NOT NULL,
+  `year` YEAR(4) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_scholarship_aid_agency1_idx` (`funding_agency_id` ASC) VISIBLE,
+  INDEX `fk_scholarship_advising1_idx` (`advising_intern_id` ASC, `advising_researcher_id` ASC) VISIBLE,
   CONSTRAINT `fk_scholarship_funding_agency1`
     FOREIGN KEY (`funding_agency_id`)
     REFERENCES `scientiometer`.`funding_agency` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_scholarship_advising1`
+    FOREIGN KEY (`advising_intern_id` , `advising_researcher_id`)
+    REFERENCES `scientiometer`.`advising` (`intern_id` , `researcher_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -733,7 +748,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`institutional_activity` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `researcher_employee_id` INT NOT NULL,
-  `activity` VARCHAR(45) NOT NULL,
+  `activity` VARCHAR(100) NOT NULL,
   `duration` INT NOT NULL,
   `year` YEAR(4) NOT NULL,
   PRIMARY KEY (`id`),
@@ -752,7 +767,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`cultural_activity` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `researcher_employee_id` INT NOT NULL,
-  `participation_type` VARCHAR(45) NOT NULL,
+  `participation_type` VARCHAR(100) NOT NULL,
   `duration` INT NOT NULL,
   `year` YEAR(4) NOT NULL,
   PRIMARY KEY (`id`),
@@ -771,7 +786,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`innovation_activity` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `researcher_employee_id` INT NOT NULL,
-  `participation_type` VARCHAR(45) NOT NULL,
+  `participation_type` VARCHAR(100) NOT NULL,
   `duration` INT NOT NULL,
   `year` YEAR(4) NOT NULL,
   PRIMARY KEY (`id`),
@@ -790,7 +805,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `scientiometer`.`service_provision` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `researcher_employee_id` INT NOT NULL,
-  `service_provisioned` VARCHAR(45) NOT NULL,
+  `service_provisioned` VARCHAR(100) NOT NULL,
   `duration` INT NOT NULL,
   `year` YEAR(4) NOT NULL,
   PRIMARY KEY (`id`),

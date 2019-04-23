@@ -54,7 +54,8 @@ abbreviations = {
 # We need to seek the file in each section
 file = None
 
-outfile = None
+# outfile = None
+
 
 def main():
     try:
@@ -68,7 +69,7 @@ def main():
     global lab_name
     global lab_div
     global file
-    global outfile
+    # global outfile
 
     delim = '|'
 
@@ -78,7 +79,7 @@ def main():
 
         elif opt in ('-f', '--file'):
             file_name = arg
-            outfile = open(file_name + '_script.sql', 'w+')
+            # outfile = open(file_name + '_script.sql', 'w+')
 
         elif opt in ('-l', '--lab'):
             lab_name[0] = arg
@@ -238,10 +239,10 @@ def section_1_4(csv_file, cursor):
     lines = locate_table(csv_file, '1.4.')
     aux_fields = {
         'internship_level': [3, 0],
+        'intern': [1, 0],
     }
     fk_ids = {
         'researcher': 0,
-        'intern': 0,
     }
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
@@ -251,14 +252,12 @@ def section_1_4(csv_file, cursor):
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
 
-                # TODO: use this agency or the one in scholarships?
-                # insert intern
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
                 fk_ids['researcher'] = cursor.fetchone()[0]
-                print(fk_ids)
-                insert_complex(
-                    cursor, 'intern', (row[1], fk_ids['researcher'], aux_fields['internship_level'][1], row[5], row[6]))
+
+                insert_complex(cursor, 'advising', (
+                    aux_fields['intern'][1], fk_ids['researcher'], aux_fields['internship_level'][1], row[5], row[6]))
 
 
 def section_1_5(csv_file, cursor):
@@ -267,10 +266,10 @@ def section_1_5(csv_file, cursor):
     lines = locate_table(csv_file, '1.5.')
     aux_fields = {
         'internship_level': [3, 0],
+        'intern': [1, 0],
     }
     fk_ids = {
         'researcher': 0,
-        'intern': 0,
     }
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
@@ -280,12 +279,12 @@ def section_1_5(csv_file, cursor):
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
 
-                # insert intern
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
                 fk_ids['researcher'] = cursor.fetchone()[0]
-                insert_complex(
-                    cursor, 'intern', (row[1], fk_ids['researcher'], aux_fields['internship_level'][1], row[4], row[5]))
+
+                insert_complex(cursor, 'advising', (
+                    aux_fields['intern'][1], fk_ids['researcher'], aux_fields['internship_level'][1], row[4], row[5]))
 
 
 def section_1_6(csv_file, cursor):
@@ -777,11 +776,12 @@ def section_4_3(csv_file, cursor):
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 cursor.execute(
-                    'SELECT id, validity_start, validity_end FROM scientiometer.intern WHERE name = %s LIMIT 1;', row[1:2])
-                fk_ids['intern'] = cursor.fetchone()
+                    'SELECT id FROM scientiometer.intern WHERE name = %s LIMIT 1;', row[1:2])
+                print(cursor.statement)
+                fk_ids['intern'] = cursor.fetchone()[0]
 
-                insert_complex(cursor, 'scholarship', (fk_ids['intern'][0], aux_fields['funding_agency']
-                                                       [1], row[3], row[5], row[6], row[7], fk_ids['intern'][1], fk_ids['intern'][2]))
+                insert_complex(cursor, 'scholarship', (
+                    aux_fields['funding_agency'][1], fk_ids['researcher'], fk_ids['intern'], row[3], row[5], row[6], row[7], year))
 
 
 def section_5_1(csv_file, cursor):
@@ -905,6 +905,7 @@ def insert_aux(cursor, query, data):
         'project_type': 'INSERT INTO `scientiometer`.`project_type` (`id`, `project_type`) VALUES (NULL, %s);',
         'funding_agency': 'INSERT INTO `scientiometer`.`funding_agency` (`id`, `agency_name`) VALUES (NULL, %s);',
         'participation_type': 'INSERT INTO `scientiometer`.`participation_type` (`id`, `participation_type`) VALUES (NULL, %s);',
+        'intern': 'INSERT INTO `scientiometer`.`intern` (`id`, `name`) VALUES (NULL, %s);',
     }
     selects = {
         'title': 'SELECT id FROM `scientiometer`.title WHERE title = %s;',
@@ -926,6 +927,7 @@ def insert_aux(cursor, query, data):
         'project_type': 'SELECT id FROM `scientiometer`.`project_type` WHERE project_type = %s;',
         'funding_agency': 'SELECT id FROM `scientiometer`.`funding_agency` WHERE agency_name = %s;',
         'participation_type': 'SELECT id FROM `scientiometer`.`participation_type` WHERE participation_type = %s;',
+        'intern': 'SELECT id FROM `scientiometer`.`intern` WHERE name = %s;',
     }
 
     if data in abbreviations:
@@ -941,9 +943,9 @@ def insert_aux(cursor, query, data):
     if id == None:
         try:
             cursor.execute(inserts[query], value)
-        except:
-            print("Failed to insert a ROW")
-        outfile.write(cursor.statement + '\n')
+        except Exception as e:
+            print("Failed to insert a ROW " + e)
+        # outfile.write(cursor.statement + '\n')
         id = cursor.lastrowid
     else:
         # HACK: the connector returns a tuple even for a single result, so we
@@ -957,7 +959,6 @@ def insert_complex(cursor, table, data):
     inserts = {
         'employee': 'INSERT INTO `scientiometer`.`employee` (`id`, `name`, `role_foundation_or_pq_level_id`, `title_id`, `foundation_employee`, `laboratory_id`) VALUES (NULL, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE name = name;',
         'researcher': 'INSERT INTO `scientiometer`.`researcher` (`employee_id`, `post_doctoral_type_id`, `researcher_id`, `orcid`, `ingress_date`, `email`, `lab_director`) VALUES (%s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE researcher_id = researcher_id;',
-        'intern': 'INSERT INTO `scientiometer`.`intern` (`id`, `name`, `researcher_employee_id`, `internship_level_id`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s);',
         'prod_scholarship': 'INSERT INTO `scientiometer`.`productivity_scholarship` (`id`, `cnpq_level_id`, `validity_start`, `validity_end`, `granted_researcher_id`) VALUES (NULL, %s, %s, %s, %s);',
         'published_work': 'INSERT INTO `scientiometer`.`published_work` (`id`, `doi_url`, `reference`, `qualis_id`, `laboratory_id`, `collaboration_type_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'laboratory': 'INSERT INTO `scientiometer`.`laboratory` (`id`, `laboratory_name`, `lab_division_id`) VALUES (NULL, %s, %s) ON DUPLICATE KEY UPDATE laboratory_name = laboratory_name;',
@@ -974,19 +975,20 @@ def insert_complex(cursor, table, data):
         'coordination_course': 'INSERT INTO `scientiometer`.`coordination_of_course` (`id`, `researcher_employee_id`, `course_name`, `course_level_id`, `course_classification_id`, `workload`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'active_aid': 'INSERT INTO `scientiometer`.`active_aid` (`id`, `granted_researcher_id`, `project_type_id`, `participation_type_id`, `funding_agency_id`, `process_number`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s);',
         'contracted_value': 'INSERT INTO `scientiometer`.`contracted_value` (`id`, `granted_researcher`, `new_process`, `process_number`, `funding_agency_id`, `value_BRL`, `value_USD`, `validity_end`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
-        'scholarship': 'INSERT INTO `scientiometer`.`scholarship` (`id`, `intern_id`, `funding_agency_id`, `process_number`, `total_value_BRL`, `total_value_USD`, `technical_reserve_BRL`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
+        'scholarship': 'INSERT INTO `scientiometer`.`scholarship` (`id`, `funding_agency_id`, `advising_researcher_id`, `advising_intern_id`, `process_number`, `total_value_BRL`, `total_value_USD`, `technical_reserve_BRL`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'institutional_activity': 'INSERT INTO `scientiometer`.`institutional_activity` (`id`, `researcher_employee_id`, `activity`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
         'cultural_activity': 'INSERT INTO `scientiometer`.`cultural_activity` (`id`, `researcher_employee_id`, `participation_type`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
         'innovation_activity': 'INSERT INTO `scientiometer`.`innovation_activity` (`id`, `researcher_employee_id`, `participation_type`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
         'service_provision': 'INSERT INTO `scientiometer`.`service_provision` (`id`, `researcher_employee_id`, `service_provisioned`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
-        'note': 'INSERT INTO `scientiometer`.`note` (`id`, `researcher_employee_id`, `note`, `year`) VALUES (NULL, %s, %s, %s);'
+        'note': 'INSERT INTO `scientiometer`.`note` (`id`, `researcher_employee_id`, `note`, `year`) VALUES (NULL, %s, %s, %s);',
+        'advising': 'INSERT INTO `scientiometer`.`advising` (`intern_id`, `researcher_id`, `internship_level_id`, `validity_start`, `validity_end`) VALUES (%s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE validity_end = validity_end;'
     }
     print(data)
     try:
         cursor.execute(inserts[table], data)
-    except:
-        print("Failed to insert a ROW")
-    outfile.write(cursor.statement + '\n')
+    except Exception as e:
+        print("Failed to insert a ROW " + e)
+    # outfile.write(cursor.statement + '\n')
     return cursor.lastrowid
 
 
