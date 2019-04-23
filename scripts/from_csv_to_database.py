@@ -292,7 +292,7 @@ def section_1_6(csv_file, cursor):
     print('Section 1.6 ----')
     lines = locate_table(csv_file, '1.6.')
     aux_fields = {
-        'cnpq_level': [2, 0],
+        'cnpq_level': [3, 0],
     }
     fk_ids = {
         'researcher': 0,
@@ -310,7 +310,7 @@ def section_1_6(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'prod_scholarship',
-                               (aux_fields['cnpq_level'][1], row[4], row[5], fk_ids['researcher']))
+                               (aux_fields['cnpq_level'][1], row[6], row[4], row[5], fk_ids['researcher']))
 
 
 def section_2_1(csv_file, cursor):
@@ -960,7 +960,7 @@ def insert_complex(cursor, table, data):
     inserts = {
         'employee': 'INSERT INTO `scientiometer`.`employee` (`id`, `name`, `role_foundation_or_pq_level_id`, `title_id`, `foundation_employee`, `laboratory_id`) VALUES (NULL, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE name = name;',
         'researcher': 'INSERT INTO `scientiometer`.`researcher` (`employee_id`, `post_doctoral_type_id`, `researcher_id`, `orcid`, `ingress_date`, `email`, `lab_director`) VALUES (%s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE researcher_id = researcher_id;',
-        'prod_scholarship': 'INSERT INTO `scientiometer`.`productivity_scholarship` (`id`, `cnpq_level_id`, `validity_start`, `validity_end`, `granted_researcher_id`) VALUES (NULL, %s, %s, %s, %s);',
+        'prod_scholarship': 'INSERT INTO `scientiometer`.`productivity_scholarship` (`id`, `cnpq_level_id`, `fb_level`, `validity_start`, `validity_end`, `granted_researcher_id`) VALUES (NULL, %s, %s, %s, %s, %s);',
         'published_work': 'INSERT INTO `scientiometer`.`published_work` (`id`, `doi_url`, `reference`, `qualis_id`, `laboratory_id`, `collaboration_type_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'laboratory': 'INSERT INTO `scientiometer`.`laboratory` (`id`, `laboratory_name`, `lab_division_id`) VALUES (NULL, %s, %s) ON DUPLICATE KEY UPDATE laboratory_name = laboratory_name;',
         'published_book': 'INSERT INTO `scientiometer`.`book_chapter_published` (`id`, `doi_url`, `isbn_online`, `isbn_print`, `reference`, `laboratory_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
