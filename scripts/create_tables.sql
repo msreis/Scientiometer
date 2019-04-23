@@ -868,6 +868,7 @@ CREATE TABLE IF NOT EXISTS `scientiometer`.`published_work` (
   `qualis_id` INT NOT NULL,
   `laboratory_id` INT NOT NULL,
   `collaboration_type_id` INT NOT NULL,
+  `impact_factor` DECIMAL(3,3) NULL,
   `year` YEAR(4) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_published_work_qualis1_idx` (`qualis_id` ASC) VISIBLE,
