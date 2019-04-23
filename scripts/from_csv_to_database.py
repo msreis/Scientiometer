@@ -54,7 +54,7 @@ abbreviations = {
 # We need to seek the file in each section
 file = None
 
-# outfile = None
+outfile = None
 
 
 def main():
@@ -69,7 +69,7 @@ def main():
     global lab_name
     global lab_div
     global file
-    # global outfile
+    global outfile
 
     delim = '|'
 
@@ -79,7 +79,7 @@ def main():
 
         elif opt in ('-f', '--file'):
             file_name = arg
-            # outfile = open(file_name + '_script.sql', 'w+')
+            outfile = open(file_name + '_script.sql', 'w+')
 
         elif opt in ('-l', '--lab'):
             lab_name[0] = arg
@@ -175,7 +175,7 @@ def section_1_1(csv_file, cursor):
                 # TODO: handle email adn code
 
                 # Handle if is a state employee
-                is_state = row[7] != ''
+                is_state = row[2] == 'I' or row[2] == 'II' or row[2] == 'III' or row[2] == 'IV' or row[2] == 'V' or row[2] == 'VI'
 
                 # Handle ingress date
                 if is_state:
@@ -944,8 +944,9 @@ def insert_aux(cursor, query, data):
         try:
             cursor.execute(inserts[query], value)
         except Exception as e:
-            print("Failed to insert a ROW " + e)
-        # outfile.write(cursor.statement + '\n')
+            print("Failed to insert a ROW ")
+            print(e)
+        outfile.write(cursor.statement + '\n')
         id = cursor.lastrowid
     else:
         # HACK: the connector returns a tuple even for a single result, so we
@@ -987,8 +988,9 @@ def insert_complex(cursor, table, data):
     try:
         cursor.execute(inserts[table], data)
     except Exception as e:
-        print("Failed to insert a ROW " + e)
-    # outfile.write(cursor.statement + '\n')
+        print("Failed to insert a ROW")
+        print(e)
+    outfile.write(cursor.statement + '\n')
     return cursor.lastrowid
 
 
