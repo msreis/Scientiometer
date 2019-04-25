@@ -562,6 +562,8 @@ def section_3_1(csv_file, cursor):
                     fk_ids['student'], fk_ids['researcher'], aux_fields['institution'][1], aux_fields['supervision_type'][1], year))
 
 
+
+#TODO: fix program name and institution separation
 def section_3_2(csv_file, cursor):
     file.seek(0)
     print('Section 3.2 ----')
@@ -727,7 +729,7 @@ def section_4_1(csv_file, cursor):
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
-                insert_complex(cursor, 'active_aid', (fk_ids['researcher'], aux_fields['project_type'][1],
+                insert_complex(cursor, 'active_grant', (fk_ids['researcher'], aux_fields['project_type'][1],
                                                       aux_fields['participation_type'][1], aux_fields['funding_agency'][1], row[5], row[6], row[7]))
 
 
@@ -988,7 +990,7 @@ def insert_complex(cursor, table, data):
         'postgrad_ministered': 'INSERT INTO `scientiometer`.`postgraduate_discipline_ministered_under_supervision` (`id`, `supervisor_researcher_id`, `postgraduate_program_id`, `discipline_name`, `discipline_code`, `institution_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'lectures': 'INSERT INTO `scientiometer`.`discipline_lectures_ministered` (`id`, `researcher_employee_id`, `postgraduate_program_id`, `institution_id`, `discipline_name`, `n_classes`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'coordination_course': 'INSERT INTO `scientiometer`.`coordination_of_course` (`id`, `researcher_employee_id`, `course_name`, `course_level_id`, `course_classification_id`, `workload`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
-        'active_aid': 'INSERT INTO `scientiometer`.`active_aid` (`id`, `granted_researcher_id`, `project_type_id`, `participation_type_id`, `funding_agency_id`, `process_number`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s);',
+        'active_grant': 'INSERT INTO `scientiometer`.`active_grant` (`id`, `granted_researcher_id`, `project_type_id`, `participation_type_id`, `funding_agency_id`, `process_number`, `validity_start`, `validity_end`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s);',
         'contracted_value': 'INSERT INTO `scientiometer`.`contracted_value` (`id`, `granted_researcher`, `new_process`, `process_number`, `funding_agency_id`, `value_BRL`, `value_USD`, `validity_end`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'scholarship': 'INSERT INTO `scientiometer`.`scholarship` (`id`, `funding_agency_id`, `advising_researcher_id`, `advising_intern_id`, `process_number`, `total_value_BRL`, `total_value_USD`, `technical_reserve_BRL`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'institutional_activity': 'INSERT INTO `scientiometer`.`institutional_activity` (`id`, `researcher_employee_id`, `activity`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
