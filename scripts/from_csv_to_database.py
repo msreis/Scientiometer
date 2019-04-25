@@ -178,7 +178,7 @@ def section_1_1(csv_file, cursor):
                 is_state = row[2] == 'I' or row[2] == 'II' or row[2] == 'III' or row[2] == 'IV' or row[2] == 'V' or row[2] == 'VI'
 
                 # Handle ingress date
-                if is_state:
+                if is_state and row[7] != '':
                     date_admission = dt.datetime.strptime(row[7], '%Y-%m-%d')
                 else:
                     # date_admission = dt.datetime.strptime(row[15], '%d/%m/%Y')
