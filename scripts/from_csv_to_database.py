@@ -491,6 +491,10 @@ def section_2_7(csv_file, cursor):
                 aux_fields['line_research'][2] = insert_aux(
                     cursor, 'line_research', row[7])
 
+                for col, _ in enumerate(row[2:6]):
+                    if row[col] == '':
+                        row[col] = None
+
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
