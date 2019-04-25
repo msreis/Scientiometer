@@ -964,8 +964,11 @@ def insert_aux(cursor, query, data):
         try:
             cursor.execute(inserts[query], value)
         except Exception as e:
-            print("Failed to insert a ROW ")
+            print("==============ERROR=================")
+            print("Failed to insert a ROW")
             print(e)
+            print("==============ERROR=================")
+
         outfile.write(cursor.statement + '\n')
         id = cursor.lastrowid
     else:
@@ -1008,8 +1011,10 @@ def insert_complex(cursor, table, data):
     try:
         cursor.execute(inserts[table], data)
     except Exception as e:
+        print("==============ERROR=================")
         print("Failed to insert a ROW")
         print(e)
+        print("==============ERROR=================")
     outfile.write(cursor.statement + '\n')
     return cursor.lastrowid
 
