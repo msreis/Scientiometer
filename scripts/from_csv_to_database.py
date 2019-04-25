@@ -538,6 +538,7 @@ def section_3_1(csv_file, cursor):
     }
     fk_ids = {
         'researcher': 0,
+        'student': 0,
     }
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
@@ -550,8 +551,15 @@ def section_3_1(csv_file, cursor):
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
                 fk_ids['researcher'] = cursor.fetchone()[0]
+
+
+                cursor.execute(
+                    'SELECT id FROM scientiometer.intern WHERE name = %s LIMIT 1;', row[1:2])
+                print(cursor.statement)
+                fk_ids['student'] = cursor.fetchone()[0]
+
                 insert_complex(cursor, 'supervision', (
-                    row[1], fk_ids['researcher'], aux_fields['institution'][1], aux_fields['supervision_type'][1], year))
+                    fk_ids['student'], fk_ids['researcher'], aux_fields['institution'][1], aux_fields['supervision_type'][1], year))
 
 
 def section_3_2(csv_file, cursor):
@@ -975,7 +983,7 @@ def insert_complex(cursor, table, data):
         'scientometric': 'INSERT INTO `scientiometer`.`scientometric_index` (`id`, `researcher_employee_id`, `n_citations_wos`, `h_index_wos`, `n_citations_gs`, `h_index_gs`, `main_line_of_research_id`, `secondary_line_of_research_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s);',
         'congress': 'INSERT INTO `scientiometer`.`congress` (`id`, `name`, `country`) VALUES (NULL, %s, %s);',
         'participation_congress': 'INSERT INTO `scientiometer`.`participation_congress` (`id`, `congress_id`, `researcher_employee_id`, `participation_role_id`, `year`) VALUES (NULL, %s, %s, %s, %s);',
-        'supervision': 'INSERT INTO `scientiometer`.`supervision` (`id`, `student_name`, `supervisor_researcher_id`, `institution_id`, `supervision_type_id`, `finish_year`) VALUES (NULL, %s, %s, %s, %s, %s);',
+        'supervision': 'INSERT INTO `scientiometer`.`supervision` (`id`, `advising_intern_id`, `advising_researcher_id`, `institution_id`, `supervision_type_id`, `finish_year`) VALUES (NULL, %s, %s, %s, %s, %s);',
         'postgrad_supervision': 'INSERT INTO `scientiometer`.`postgraduate_program_supervision` (`id`, `researcher_employee_id`, `postgraduate_level_id`, `postgraduate_program_id`, `institution_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s);',
         'postgrad_ministered': 'INSERT INTO `scientiometer`.`postgraduate_discipline_ministered_under_supervision` (`id`, `supervisor_researcher_id`, `postgraduate_program_id`, `discipline_name`, `discipline_code`, `institution_id`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
         'lectures': 'INSERT INTO `scientiometer`.`discipline_lectures_ministered` (`id`, `researcher_employee_id`, `postgraduate_program_id`, `institution_id`, `discipline_name`, `n_classes`, `year`) VALUES (NULL, %s, %s, %s, %s, %s, %s);',
