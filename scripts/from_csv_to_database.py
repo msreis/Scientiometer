@@ -172,10 +172,10 @@ def section_1_1(csv_file, cursor):
                     fk_ids['lab'] = fk_ids['lab'][0]
                 lab_name[1] = fk_ids['lab']
 
-                # TODO: handle email adn code
+                # TODO: handle email and code
 
                 # Handle if is a state employee
-                is_state = not (row[2] == 'I' or row[2] == 'II' or row[2] == 'III' or row[2] == 'IV' or row[2] == 'V' or row[2] == 'VI')
+                is_state = row[2] == 'I' or row[2] == 'II' or row[2] == 'III' or row[2] == 'IV' or row[2] == 'V' or row[2] == 'VI'
 
                 # Handle ingress date
                 if is_state and row[7] != '':
@@ -980,7 +980,7 @@ def insert_aux(cursor, query, data):
             print("Failed to insert a ROW")
             print(e)
             print("==============ERROR=================")
-            cursor._connection.rollback()
+            # cursor._connection.rollback()
 
         outfile.write(cursor.statement + '\n')
         id = cursor.lastrowid
@@ -1028,7 +1028,8 @@ def insert_complex(cursor, table, data):
         print("Failed to insert a ROW")
         print(e)
         print("==============ERROR=================")
-        cursor._connection.rollback()
+        # cursor._connection.rollback()
+
     outfile.write(cursor.statement + '\n')
     return cursor.lastrowid
 
