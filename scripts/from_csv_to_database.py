@@ -491,7 +491,7 @@ def section_2_7(csv_file, cursor):
                 aux_fields['line_research'][2] = insert_aux(
                     cursor, 'line_research', row[7])
 
-                for col, _ in enumerate(row[2:6]):
+                for col in range(2,6):
                     if row[col] == '':
                         row[col] = None
 
