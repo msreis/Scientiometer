@@ -256,8 +256,11 @@ def section_1_4(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[2:3])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
+                if row[7] == '':
+                    row[7] = None
+
                 insert_complex(cursor, 'advising', (
-                    aux_fields['intern'][1], fk_ids['researcher'], aux_fields['internship_level'][1], row[5], row[6]))
+                    aux_fields['intern'][1], fk_ids['researcher'], aux_fields['internship_level'][1], row[5], row[6], row[7]))
 
 
 def section_1_5(csv_file, cursor):
@@ -283,8 +286,11 @@ def section_1_5(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[2:3])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
+                if row[6] == '':
+                    row[6] = None
+
                 insert_complex(cursor, 'advising', (
-                    aux_fields['intern'][1], fk_ids['researcher'], aux_fields['internship_level'][1], row[4], row[5]))
+                    aux_fields['intern'][1], fk_ids['researcher'], aux_fields['internship_level'][1], row[4], row[5], row[6]))
 
 
 def section_1_6(csv_file, cursor):
@@ -1019,7 +1025,7 @@ def insert_complex(cursor, table, data):
         'innovation_activity': 'INSERT INTO `scientiometer`.`innovation_activity` (`id`, `researcher_employee_id`, `participation_type`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
         'service_provision': 'INSERT INTO `scientiometer`.`service_provision` (`id`, `researcher_employee_id`, `service_provisioned`, `duration`, `year`) VALUES (NULL, %s, %s, %s, %s);',
         'note': 'INSERT INTO `scientiometer`.`note` (`id`, `researcher_employee_id`, `note`, `year`) VALUES (NULL, %s, %s, %s);',
-        'advising': 'INSERT INTO `scientiometer`.`advising` (`intern_id`, `researcher_id`, `internship_level_id`, `validity_start`, `validity_end`) VALUES (%s, %s, %s, %s, %s);'
+        'advising': 'INSERT INTO `scientiometer`.`advising` (`intern_id`, `researcher_id`, `internship_level_id`, `validity_start`, `validity_end`, `postdoc_supervisor`) VALUES (%s, %s, %s, %s, %s, %s);'
     }
     print(data)
     try:
