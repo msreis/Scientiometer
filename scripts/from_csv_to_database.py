@@ -354,7 +354,7 @@ def section_2_2(csv_file, cursor):
     }
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
-            if row[1]:
+            if row[1] or row[2] or row[3] or row[4]:
                 print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
