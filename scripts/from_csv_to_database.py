@@ -163,7 +163,7 @@ def section_1_1(csv_file, cursor):
                 # insert laboratory is a special case
                 fk_ids['lab_div'] = insert_aux(cursor, 'lab_div', lab_div)
                 cursor.execute(
-                    'SELECT id FROM scientiometer.laboratory WHERE laboratory_name = %s;', lab_name[0:1])
+                    'SELECT id FROM scientiometer.laboratory WHERE laboratory_name = %s LIMIT 1;', lab_name[0:1])
                 fk_ids['lab'] = cursor.fetchone()
                 if fk_ids['lab'] == None:
                     fk_ids['lab'] = insert_complex(
@@ -253,7 +253,7 @@ def section_1_4(csv_file, cursor):
                         cursor, field, row[aux_fields[field][0]]))
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[2:3])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 insert_complex(cursor, 'advising', (
@@ -280,7 +280,7 @@ def section_1_5(csv_file, cursor):
                         cursor, field, row[aux_fields[field][0]]))
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[2:3])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 insert_complex(cursor, 'advising', (
@@ -307,7 +307,7 @@ def section_1_6(csv_file, cursor):
 
                 # insert productivity scholarship
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'prod_scholarship',
                                (aux_fields['cnpq_level'][1], row[6], row[4], row[5], fk_ids['researcher']))
@@ -375,7 +375,7 @@ def section_2_3(csv_file, cursor):
                         row[col] = 0
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(
                     cursor, 'article_prod', (fk_ids['researcher'], row[2], row[3], row[4], row[5], row[6], year))
@@ -403,7 +403,7 @@ def section_2_4(csv_file, cursor):
                         row[col] = 0
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'article_student_postdoc', (
                     fk_ids['researcher'], aux_fields['funding_agency'][1], row[2], row[3], row[4], row[5], row[6], year))
@@ -431,7 +431,7 @@ def section_2_5(csv_file, cursor):
                         row[col] = 0
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'article_student_postdoc', (
                     fk_ids['researcher'], aux_fields['funding_agency'][1], row[2], row[3], row[4], row[5], row[6], year))
@@ -461,7 +461,7 @@ def section_2_6(csv_file, cursor):
                         row[col] = 0
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 # HACK: insert two rows, one for foundation and one for CNPq
@@ -496,7 +496,7 @@ def section_2_7(csv_file, cursor):
                         row[col] = None
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'scientometric', (
                     fk_ids['researcher'],  row[2], row[3], row[4], row[5], aux_fields['line_research'][1], aux_fields['line_research'][2], year))
@@ -520,7 +520,7 @@ def section_2_8(csv_file, cursor):
 
                 # Every participation type we insert as a separate participation
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 fk_ids['congress'] = insert_complex(
                     cursor, 'congress', (row[2], row[3]))
@@ -553,7 +553,7 @@ def section_3_1(csv_file, cursor):
                         cursor, field, row[aux_fields[field][0]]))
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[2:3])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
 
@@ -600,7 +600,7 @@ def section_3_2(csv_file, cursor):
                     cursor, 'postgraduate_level', row[aux_fields['postgraduate_level'][0]]))
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'postgrad_supervision', (fk_ids['researcher'], aux_fields['postgraduate_level']
                                                                 [1], aux_fields['postgraduate_program'][1], aux_fields['institution'][1], year))
@@ -639,7 +639,7 @@ def section_3_3(csv_file, cursor):
                     cursor, 'postgraduate_program', program))
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'postgrad_ministered', (
                     fk_ids['researcher'], aux_fields['postgraduate_program'][1], row[4], row[3], aux_fields['institution'][1], year))
@@ -678,7 +678,7 @@ def section_3_4(csv_file, cursor):
                     cursor, 'postgraduate_program', program))
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'lectures', (
                     fk_ids['researcher'], aux_fields['postgraduate_program'][1], aux_fields['institution'][1], row[4], row[5],  year))
@@ -704,7 +704,7 @@ def section_3_5(csv_file, cursor):
                         cursor, field, row[aux_fields[field][0]]))
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'coordination_course', (
                     fk_ids['researcher'], row[2], aux_fields['course_level'][1], aux_fields['course_classification'][1], row[5], year))
@@ -731,7 +731,7 @@ def section_4_1(csv_file, cursor):
                         cursor, field, row[aux_fields[field][0]]))
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
                 insert_complex(cursor, 'active_grant', (fk_ids['researcher'], aux_fields['project_type'][1],
                                                       aux_fields['participation_type'][1], aux_fields['funding_agency'][1], row[5], row[6], row[7]))
@@ -759,7 +759,7 @@ def section_4_2(csv_file, cursor):
                     if row[col] == '':
                         row[col] = 0
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 new_process = row[2] == 'Processo novo'
@@ -792,7 +792,7 @@ def section_4_3(csv_file, cursor):
                         row[col] = 0
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[2:3])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[2:3])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 cursor.execute(
@@ -817,7 +817,7 @@ def section_5_1(csv_file, cursor):
                 print(row)
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 if row[3] == '':
@@ -840,7 +840,7 @@ def section_5_2(csv_file, cursor):
                 print(row)
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 if row[3] == '':
@@ -863,7 +863,7 @@ def section_5_3(csv_file, cursor):
                 print(row)
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 if row[3] == '':
@@ -889,7 +889,7 @@ def section_5_4(csv_file, cursor):
                     row[3] = None
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 insert_complex(cursor, 'service_provision',
@@ -909,7 +909,7 @@ def section_6_0(csv_file, cursor):
                 print(row)
 
                 cursor.execute(
-                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
+                    'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
                 insert_complex(
@@ -980,6 +980,7 @@ def insert_aux(cursor, query, data):
             print("Failed to insert a ROW")
             print(e)
             print("==============ERROR=================")
+            cursor._connection.rollback()
 
         outfile.write(cursor.statement + '\n')
         id = cursor.lastrowid
@@ -1027,6 +1028,7 @@ def insert_complex(cursor, table, data):
         print("Failed to insert a ROW")
         print(e)
         print("==============ERROR=================")
+        cursor._connection.rollback()
     outfile.write(cursor.statement + '\n')
     return cursor.lastrowid
 
