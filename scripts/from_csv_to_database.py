@@ -978,7 +978,7 @@ def insert_aux(cursor, query, data):
         except Exception as e:
             print("==============ERROR=================")
             print("Failed to insert a ROW")
-            print(e)
+            print(e, file=sys.stderr)
             print("==============ERROR=================")
             cursor._connection.rollback()
             exit(1)
@@ -1027,7 +1027,7 @@ def insert_complex(cursor, table, data):
     except Exception as e:
         print("==============ERROR=================")
         print("Failed to insert a ROW")
-        print(e)
+        print(e, file=sys.stderr)
         print("==============ERROR=================")
         cursor._connection.rollback()
         exit(1)
