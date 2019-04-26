@@ -973,9 +973,6 @@ def insert_aux(cursor, query, data):
 
     id = cursor.fetchone()
     if id == None:
-        for num, item in enumerate(data):
-            data[num] = None
-
         try:
             cursor.execute(inserts[query], value)
         except Exception as e:
@@ -1024,8 +1021,6 @@ def insert_complex(cursor, table, data):
         'advising': 'INSERT INTO `scientiometer`.`advising` (`intern_id`, `researcher_id`, `internship_level_id`, `validity_start`, `validity_end`) VALUES (%s, %s, %s, %s, %s);'
     }
     print(data)
-    for num, item in enumerate(data):
-        data[num] = None
     try:
         cursor.execute(inserts[table], data)
     except Exception as e:
