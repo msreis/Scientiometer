@@ -820,6 +820,9 @@ def section_5_1(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
+                if row[3] == '':
+                    row[3] = None
+
                 insert_complex(cursor, 'institutional_activity',
                                (fk_ids['researcher'], row[2], row[3], year))
 
@@ -839,6 +842,9 @@ def section_5_2(csv_file, cursor):
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
+
+                if row[3] == '':
+                    row[3] = None
 
                 insert_complex(cursor, 'cultural_activity',
                                (fk_ids['researcher'], row[2], row[3], year))
@@ -860,6 +866,9 @@ def section_5_3(csv_file, cursor):
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
                 fk_ids['researcher'] = cursor.fetchone()[0]
 
+                if row[3] == '':
+                    row[3] = None
+
                 insert_complex(cursor, 'innovation_activity',
                                (fk_ids['researcher'], row[2], row[3], year))
 
@@ -875,6 +884,9 @@ def section_5_4(csv_file, cursor):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
                 print(row)
+
+                if row[3] == '':
+                    row[3] = None
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s;', row[1:2])
