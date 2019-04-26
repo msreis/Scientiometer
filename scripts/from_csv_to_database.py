@@ -983,7 +983,7 @@ def insert_aux(cursor, query, data):
             print("Failed to insert a ROW")
             print(e)
             print("==============ERROR=================")
-            # cursor._connection.rollback()
+            cursor._connection.rollback()
 
         outfile.write(cursor.statement + '\n')
         id = cursor.lastrowid
@@ -1033,7 +1033,7 @@ def insert_complex(cursor, table, data):
         print("Failed to insert a ROW")
         print(e)
         print("==============ERROR=================")
-        # cursor._connection.rollback()
+        cursor._connection.rollback()
 
     outfile.write(cursor.statement + '\n')
     return cursor.lastrowid
