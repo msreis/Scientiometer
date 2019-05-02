@@ -1033,6 +1033,8 @@ def insert_aux(cursor, query, data):
     else:
         value = [data]
 
+    if verbose:
+        print(data)
 
     cursor.execute(selects[query], value)
 
@@ -1086,6 +1088,8 @@ def insert_complex(cursor, table, data):
         'note': 'INSERT INTO `scientiometer`.`note` (`id`, `researcher_employee_id`, `note`, `year`) VALUES (NULL, %s, %s, %s);',
         'advising': 'INSERT INTO `scientiometer`.`advising` (`intern_id`, `researcher_id`, `internship_level_id`, `validity_start`, `validity_end`, `postdoc_supervisor`) VALUES (%s, %s, %s, %s, %s, %s);'
     }
+    if verbose:
+        print(data)
     try:
         cursor.execute(inserts[table], data)
     except Exception as e:
