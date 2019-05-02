@@ -175,10 +175,13 @@ def section_1_1(csv_file, cursor):
                 # TODO: handle email and code
 
                 # Handle if is a state employee
-                is_state = row[2] == 'I' or row[2] == 'II' or row[2] == 'III' or row[2] == 'IV' or row[2] == 'V' or row[2] == 'VI'
+                if re.search('I|II|III|IV|V|VI|Assistente Técnico', row[2]):
+                    is_state = True
+                else:
+                    is_state = False
 
                 # Handle ingress date
-                if is_state and row[7] != '':
+                if row[7] != '':
                     date_admission = dt.datetime.strptime(row[7], '%Y-%m-%d')
                 else:
                     # date_admission = dt.datetime.strptime(row[15], '%d/%m/%Y')
