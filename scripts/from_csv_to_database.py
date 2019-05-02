@@ -97,7 +97,7 @@ def main():
 <csv delimiter> [-h | --help]')
             sys.exit(2)
         elif opt == '-v':
-            verbose == True
+            verbose = True
 
     conn = mysql.connector.connect(
         host=db_host,
