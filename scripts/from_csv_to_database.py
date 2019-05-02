@@ -55,12 +55,13 @@ abbreviations = {
 file = None
 
 outfile = None
+verbose = False
 
 
 def main():
     try:
         optlist, args = getopt.gnu_getopt(
-            sys.argv[1:], 'y:f:l:d:h', ['year=', 'file=', 'lab=', 'div=', 'delimiter=', 'help'])
+            sys.argv[1:], 'y:f:l:d:hv', ['year=', 'file=', 'lab=', 'div=', 'delimiter=', 'help'])
 
     except getopt.GetoptError as err:
         print(err)
@@ -70,6 +71,7 @@ def main():
     global lab_div
     global file
     global outfile
+    global verbose
 
     delim = '|'
 
@@ -94,6 +96,8 @@ def main():
 [-l| --lab] <lab name> [--div] <lab division> [-d | --delimiter]\
 <csv delimiter> [-h | --help]')
             sys.exit(2)
+        elif opt == '-v':
+            verbose == True
 
     conn = mysql.connector.connect(
         host=db_host,
@@ -139,7 +143,8 @@ def main():
 
 def section_1_1(csv_file, cursor):
     file.seek(0)
-    print('Section 1.1 ----')
+    if verbose:
+        print('Section 1.1 ----')
     lines = locate_table(csv_file, '1.1.')
     file.seek(0)
     aux_fields = {
@@ -155,7 +160,8 @@ def section_1_1(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -198,7 +204,8 @@ def section_1_1(csv_file, cursor):
 
 def section_1_2(csv_file, cursor):
     file.seek(0)
-    print('Section 1.2 ----')
+    if verbose:
+        print('Section 1.2 ----')
     lines = locate_table(csv_file, '1.2.')
     aux_fields = {
         'role': [2, 0],
@@ -207,7 +214,8 @@ def section_1_2(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -218,7 +226,8 @@ def section_1_2(csv_file, cursor):
 
 def section_1_3(csv_file, cursor):
     file.seek(0)
-    print('Section 1.3 ----')
+    if verbose:
+        print('Section 1.3 ----')
     lines = locate_table(csv_file, '1.3.')
     aux_fields = {
         'role': [2, 0],
@@ -227,7 +236,8 @@ def section_1_3(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -238,7 +248,8 @@ def section_1_3(csv_file, cursor):
 
 def section_1_4(csv_file, cursor):
     file.seek(0)
-    print('Section 1.4 ----')
+    if verbose:
+        print('Section 1.4 ----')
     lines = locate_table(csv_file, '1.4.')
     aux_fields = {
         'internship_level': [3, 0],
@@ -250,7 +261,8 @@ def section_1_4(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -268,7 +280,8 @@ def section_1_4(csv_file, cursor):
 
 def section_1_5(csv_file, cursor):
     file.seek(0)
-    print('Section 1.5 ----')
+    if verbose:
+        print('Section 1.5 ----')
     lines = locate_table(csv_file, '1.5.')
     aux_fields = {
         'internship_level': [3, 0],
@@ -280,7 +293,8 @@ def section_1_5(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -298,7 +312,8 @@ def section_1_5(csv_file, cursor):
 
 def section_1_6(csv_file, cursor):
     file.seek(0)
-    print('Section 1.6 ----')
+    if verbose:
+        print('Section 1.6 ----')
     lines = locate_table(csv_file, '1.6.')
     aux_fields = {
         'cnpq_level': [3, 0],
@@ -309,7 +324,8 @@ def section_1_6(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -324,7 +340,8 @@ def section_1_6(csv_file, cursor):
 
 def section_2_1(csv_file, cursor):
     file.seek(0)
-    print('Section 2.1 ----')
+    if verbose:
+        print('Section 2.1 ----')
     lines = locate_table(csv_file, '2.1.')
     aux_fields = {
         'qualis': [3, 0],
@@ -333,7 +350,8 @@ def section_2_1(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1] or row[2]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -350,7 +368,8 @@ def section_2_1(csv_file, cursor):
 
 def section_2_2(csv_file, cursor):
     file.seek(0)
-    print('Section 2.2 ----')
+    if verbose:
+        print('Section 2.2 ----')
     lines = locate_table(csv_file, '2.2.')
     aux_fields = {
         'collab_type': [4, 0],
@@ -358,7 +377,8 @@ def section_2_2(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1] or row[2] or row[3] or row[4]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -369,7 +389,8 @@ def section_2_2(csv_file, cursor):
 
 def section_2_3(csv_file, cursor):
     file.seek(0)
-    print('Section 2.3 ----')
+    if verbose:
+        print('Section 2.3 ----')
     lines = locate_table(csv_file, '2.3.')
     fk_ids = {
         'researcher': 0,
@@ -377,7 +398,8 @@ def section_2_3(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
 
                 for col, _ in enumerate(row):
                     if row[col] == '':
@@ -392,7 +414,8 @@ def section_2_3(csv_file, cursor):
 
 def section_2_4(csv_file, cursor):
     file.seek(0)
-    print('Section 2.4 ----')
+    if verbose:
+        print('Section 2.4 ----')
     lines = locate_table(csv_file, '2.4.')
     aux_fields = {
         'funding_agency': [4, 0],
@@ -403,7 +426,8 @@ def section_2_4(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 aux_fields['funding_agency'][1] = insert_aux(
                     cursor, 'funding_agency', 'FAPESP')
 
@@ -420,7 +444,8 @@ def section_2_4(csv_file, cursor):
 
 def section_2_5(csv_file, cursor):
     file.seek(0)
-    print('Section 2.5 ----')
+    if verbose:
+        print('Section 2.5 ----')
     lines = locate_table(csv_file, '2.5.')
     aux_fields = {
         'funding_agency': [4, 0],
@@ -431,7 +456,8 @@ def section_2_5(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 aux_fields['funding_agency'][1] = insert_aux(
                     cursor, 'funding_agency', 'CAPES')
 
@@ -448,7 +474,8 @@ def section_2_5(csv_file, cursor):
 
 def section_2_6(csv_file, cursor):
     file.seek(0)
-    print('Section 2.6 ----')
+    if verbose:
+        print('Section 2.6 ----')
     lines = locate_table(csv_file, '2.6.')
     aux_fields = {
         'funding_agency': [4, 0, 0],
@@ -459,7 +486,8 @@ def section_2_6(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 aux_fields['funding_agency'][1] = insert_aux(
                     cursor, 'funding_agency', 'CNPq')
                 aux_fields['funding_agency'][2] = insert_aux(
@@ -483,7 +511,8 @@ def section_2_6(csv_file, cursor):
 
 def section_2_7(csv_file, cursor):
     file.seek(0)
-    print('Section 2.7 ----')
+    if verbose:
+        print('Section 2.7 ----')
     lines = locate_table(csv_file, '2.7.')
     aux_fields = {
         'line_research': [4, 0, 0],
@@ -494,7 +523,8 @@ def section_2_7(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 aux_fields['line_research'][1] = insert_aux(
                     cursor, 'line_research', row[6])
                 aux_fields['line_research'][2] = insert_aux(
@@ -513,7 +543,8 @@ def section_2_7(csv_file, cursor):
 
 def section_2_8(csv_file, cursor):
     file.seek(0)
-    print('Section 2.8 ----')
+    if verbose:
+        print('Section 2.8 ----')
     lines = locate_table(csv_file, '2.8.')
     aux_fields = {
         'participation_role': [4, 0, 0, 0],
@@ -525,7 +556,8 @@ def section_2_8(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
 
                 # Every participation type we insert as a separate participation
                 cursor.execute(
@@ -543,7 +575,8 @@ def section_2_8(csv_file, cursor):
 
 def section_3_1(csv_file, cursor):
     file.seek(0)
-    print('Section 3.1 ----')
+    if verbose:
+        print('Section 3.1 ----')
     lines = locate_table(csv_file, '3.1.')
     aux_fields = {
         'institution': [3, 0],
@@ -556,7 +589,8 @@ def section_3_1(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -568,7 +602,6 @@ def section_3_1(csv_file, cursor):
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.intern WHERE name = %s LIMIT 1;', row[1:2])
-                print(cursor.statement)
                 fk_ids['student'] = cursor.fetchone()[0]
 
                 insert_complex(cursor, 'supervision', (
@@ -579,7 +612,8 @@ def section_3_1(csv_file, cursor):
 #TODO: fix program name and institution separation
 def section_3_2(csv_file, cursor):
     file.seek(0)
-    print('Section 3.2 ----')
+    if verbose:
+        print('Section 3.2 ----')
     lines = locate_table(csv_file, '3.2.')
     aux_fields = {
         'institution': [2, 0],
@@ -592,7 +626,8 @@ def section_3_2(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 # Separates program from institution from same field in csv.
                 # Also handles names containing '-' and names without institution
                 program = row[aux_fields['postgraduate_program'][0]].split('-')[0:-1]\
@@ -617,7 +652,8 @@ def section_3_2(csv_file, cursor):
 
 def section_3_3(csv_file, cursor):
     file.seek(0)
-    print('Section 3.3 ----')
+    if verbose:
+        print('Section 3.3 ----')
     lines = locate_table(csv_file, '3.3.')
     aux_fields = {
         'institution': [2, 0],
@@ -629,7 +665,8 @@ def section_3_3(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 # Separates program from institution from same field in csv.
                 # Also handles names containing '-' and names without institution
                 program = row[aux_fields['postgraduate_program'][0]].split(' - ')[0:-1]\
@@ -656,7 +693,8 @@ def section_3_3(csv_file, cursor):
 
 def section_3_4(csv_file, cursor):
     file.seek(0)
-    print('Section 3.4 ----')
+    if verbose:
+        print('Section 3.4 ----')
     lines = locate_table(csv_file, '3.4.')
     aux_fields = {
         'institution': [2, 0],
@@ -668,7 +706,8 @@ def section_3_4(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 # Separates program from institution from same field in csv.
                 # Also handles names containing '-' and names without institution
                 program = row[aux_fields['postgraduate_program'][0]].split(' - ')[0:-1]\
@@ -695,7 +734,8 @@ def section_3_4(csv_file, cursor):
 
 def section_3_5(csv_file, cursor):
     file.seek(0)
-    print('Section 3.5 ----')
+    if verbose:
+        print('Section 3.5 ----')
     lines = locate_table(csv_file, '3.5.')
     aux_fields = {
         'course_level': [3, 0],
@@ -707,7 +747,8 @@ def section_3_5(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -721,7 +762,8 @@ def section_3_5(csv_file, cursor):
 
 def section_4_1(csv_file, cursor):
     file.seek(0)
-    print('Section 4.1 ----')
+    if verbose:
+        print('Section 4.1 ----')
     lines = locate_table(csv_file, '4.1.')
     aux_fields = {
         'project_type': [2, 0],
@@ -734,7 +776,8 @@ def section_4_1(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -748,7 +791,8 @@ def section_4_1(csv_file, cursor):
 
 def section_4_2(csv_file, cursor):
     file.seek(0)
-    print('Section 4.2 ----')
+    if verbose:
+        print('Section 4.2 ----')
     lines = locate_table(csv_file, '4.2.')
     aux_fields = {
         'funding_agency': [4, 0],
@@ -759,7 +803,8 @@ def section_4_2(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -779,7 +824,8 @@ def section_4_2(csv_file, cursor):
 
 def section_4_3(csv_file, cursor):
     file.seek(0)
-    print('Section 4.3 ----')
+    if verbose:
+        print('Section 4.3 ----')
     lines = locate_table(csv_file, '4.3.')
     aux_fields = {
         'funding_agency': [4, 0],
@@ -791,7 +837,8 @@ def section_4_3(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
                 for field in aux_fields:
                     aux_fields[field][1] = (insert_aux(
                         cursor, field, row[aux_fields[field][0]]))
@@ -815,7 +862,8 @@ def section_4_3(csv_file, cursor):
 
 def section_5_1(csv_file, cursor):
     file.seek(0)
-    print('Section 5.1 ----')
+    if verbose:
+        print('Section 5.1 ----')
     lines = locate_table(csv_file, '5.1.')
     fk_ids = {
         'researcher': 0,
@@ -823,7 +871,8 @@ def section_5_1(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
@@ -838,7 +887,8 @@ def section_5_1(csv_file, cursor):
 
 def section_5_2(csv_file, cursor):
     file.seek(0)
-    print('Section 5.2 ----')
+    if verbose:
+        print('Section 5.2 ----')
     lines = locate_table(csv_file, '5.2.')
     fk_ids = {
         'researcher': 0,
@@ -846,7 +896,8 @@ def section_5_2(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
@@ -861,7 +912,8 @@ def section_5_2(csv_file, cursor):
 
 def section_5_3(csv_file, cursor):
     file.seek(0)
-    print('Section 5.3 ----')
+    if verbose:
+        print('Section 5.3 ----')
     lines = locate_table(csv_file, '5.3.')
     fk_ids = {
         'researcher': 0,
@@ -869,7 +921,8 @@ def section_5_3(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
@@ -884,7 +937,8 @@ def section_5_3(csv_file, cursor):
 
 def section_5_4(csv_file, cursor):
     file.seek(0)
-    print('Section 5.4 ----')
+    if verbose:
+        print('Section 5.4 ----')
     lines = locate_table(csv_file, '5.4.')
     fk_ids = {
         'researcher': 0,
@@ -892,7 +946,8 @@ def section_5_4(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
 
                 if row[3] == '':
                     row[3] = None
@@ -907,7 +962,8 @@ def section_5_4(csv_file, cursor):
 
 def section_6_0(csv_file, cursor):
     file.seek(0)
-    print('Section 6.0 ----')
+    if verbose:
+        print('Section 6.0 ----')
     lines = locate_table(csv_file, '6 – ')
     fk_ids = {
         'researcher': 0,
@@ -915,7 +971,8 @@ def section_6_0(csv_file, cursor):
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1]:
-                print(row)
+                if verbose:
+                    print(row)
 
                 cursor.execute(
                     'SELECT id FROM scientiometer.researcher_data WHERE name = %s LIMIT 1;', row[1:2])
@@ -976,7 +1033,6 @@ def insert_aux(cursor, query, data):
     else:
         value = [data]
 
-    print(value)
 
     cursor.execute(selects[query], value)
 
@@ -1030,7 +1086,6 @@ def insert_complex(cursor, table, data):
         'note': 'INSERT INTO `scientiometer`.`note` (`id`, `researcher_employee_id`, `note`, `year`) VALUES (NULL, %s, %s, %s);',
         'advising': 'INSERT INTO `scientiometer`.`advising` (`intern_id`, `researcher_id`, `internship_level_id`, `validity_start`, `validity_end`, `postdoc_supervisor`) VALUES (%s, %s, %s, %s, %s, %s);'
     }
-    print(data)
     try:
         cursor.execute(inserts[table], data)
     except Exception as e:
@@ -1051,15 +1106,12 @@ def locate_table(csv_file, match):
     found_id = False
     for n, row in enumerate(csv_file):
         if not found and (re.search('^' + match, row[1]) or re.search('^' + match, row[0])):
-            print('match > ', n, row)
             found = True
         elif found:
             if row[0] == 'ID':
-                print('id > ', n, row)
                 found_id = True
                 result[0] = n + 1
             elif row[0] == '' and found_id:
-                print('empty > ', n, row)
                 result[1] = n - result[0]
                 break
 
