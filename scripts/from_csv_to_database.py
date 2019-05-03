@@ -61,7 +61,7 @@ verbose = False
 def main():
     try:
         optlist, args = getopt.gnu_getopt(
-            sys.argv[1:], 'y:f:l:d:hv', ['year=', 'file=', 'lab=', 'div=', 'delimiter=', 'help'])
+            sys.argv[1:], 'y:f:l:d:i:hv', ['year=', 'file=', 'lab=', 'div=', 'delimiter=', 'help', 'verbose'])
 
     except getopt.GetoptError as err:
         print(err)
@@ -92,11 +92,18 @@ def main():
         elif opt == '--div':
             lab_div = arg
         elif opt in ('-h', '--help'):
-            print('Usage: script.py [-y | --year] <year> [-f | --file] <file>\
-[-l| --lab] <lab name> [--div] <lab division> [-d | --delimiter]\
-<csv delimiter> [-h | --help]')
+            print("""\
+                Usage: script.py
+                    -y | --year <year>
+                    -f | --file <file>
+                    -l | --lab <lab name>
+                    -d | --delimiter <csv delimiter>
+                    -i | --div <lab division>
+                    -v | --verbose
+                    -h | --help Show this message"""
+                    )
             sys.exit(2)
-        elif opt == '-v':
+        elif opt in ('-v' 'verbose'):
             verbose = True
 
     conn = mysql.connector.connect(
