@@ -372,16 +372,12 @@ def section_2_2(csv_file, cursor):
         print('Section 2.2 ----')
     lines = locate_table(csv_file, '2.2.')
     aux_fields = {
-        'collab_type': [4, 0],
     }
     for num, row in enumerate(csv_file):
         if num >= lines[0] and num < lines[0] + lines[1]:
             if row[1] or row[2] or row[3] or row[4]:
                 if verbose:
                     print(row)
-                for field in aux_fields:
-                    aux_fields[field][1] = (insert_aux(
-                        cursor, field, row[aux_fields[field][0]]))
 
                 insert_complex(cursor, 'published_book',
                                (row[1], row[2], row[3], row[4], lab_name[1], year))
