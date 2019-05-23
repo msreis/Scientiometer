@@ -95,6 +95,9 @@ def main():
             mode = 'single'
 
         elif opt in ('-a', '--all'):
+            if (input("Are you sure to change ALL codes in database? YES or NO: ") != 'YES'):
+                print("Operation canceled")
+                exit(0)
             mode = 'all'
 
         elif opt in ('-e', '--empty'):
