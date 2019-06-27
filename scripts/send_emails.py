@@ -62,11 +62,11 @@ class Email:
         return message_obj
 
     def __str__(self):
-        return "HEADERS -----\n" +\
-        self.message.values().__str__() +\
-        "\n\nMESSAGE -------\n" +\
+        return "To: " +\
+        self.message.values()[1].__str__() +\
+        "\n\nMESSAGE :\n" +\
         self.message_text +\
-        "\n"
+        "\n======================================================================\n"
 
     def send(self):
         print(f'Sending message to {self.email}')
