@@ -10,6 +10,7 @@ services:
     environment:
       MYSQL_USER: example
       MYSQL_PASSWORD: example
+      MYSQL_ROOR_PASSWORD: example
     ports:
       - 3306:3306
       - 33060:33060
