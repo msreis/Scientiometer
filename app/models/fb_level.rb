@@ -1,0 +1,2 @@
+class FbLevel < ApplicationRecord
+end

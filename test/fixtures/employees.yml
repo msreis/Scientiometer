@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  is_foundation: false
+  laboratory: one
+  role_foundation_level: one
+  title: one
+
+two:
+  name: MyString
+  is_foundation: false
+  laboratory: two
+  role_foundation_level: two
+  title: two

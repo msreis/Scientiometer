@@ -1,0 +1,2 @@
+class CourseDegree < ApplicationRecord
+end

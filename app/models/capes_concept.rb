@@ -1,0 +1,2 @@
+class CapesConcept < ApplicationRecord
+end

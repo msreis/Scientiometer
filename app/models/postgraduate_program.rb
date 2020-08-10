@@ -1,0 +1,2 @@
+class PostgraduateProgram < ApplicationRecord
+end

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  cnpq_level: one
+  validity_start: 2019-10-25
+  validity_end: 2019-10-25
+  researcher: one
+
+two:
+  cnpq_level: two
+  validity_start: 2019-10-25
+  validity_end: 2019-10-25
+  researcher: two

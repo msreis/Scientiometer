@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  postgraduate_program: one
+  institution: one
+  subject: one
+  year: 2019-10-25
+
+two:
+  postgraduate_program: two
+  institution: two
+  subject: two
+  year: 2019-10-25

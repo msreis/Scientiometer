@@ -1,0 +1,2 @@
+class Qualis < ApplicationRecord
+end

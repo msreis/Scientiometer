@@ -1,0 +1,2 @@
+class Congress < ApplicationRecord
+end

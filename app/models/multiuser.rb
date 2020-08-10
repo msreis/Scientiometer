@@ -1,0 +1,2 @@
+class Multiuser < ApplicationRecord
+end

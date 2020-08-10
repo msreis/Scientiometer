@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  researcher: one
+  grant_project_type: one
+  grant_participation_type: one
+  funding_agency: one
+  process_number: MyString
+  value_BRL: 1.5
+  value_USD: 1.5
+  validity_start: 2019-10-25
+  validity_end: 2019-10-25
+
+two:
+  researcher: two
+  grant_project_type: two
+  grant_participation_type: two
+  funding_agency: two
+  process_number: MyString
+  value_BRL: 1.5
+  value_USD: 1.5
+  validity_start: 2019-10-25
+  validity_end: 2019-10-25

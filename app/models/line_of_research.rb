@@ -1,0 +1,2 @@
+class LineOfResearch < ApplicationRecord
+end

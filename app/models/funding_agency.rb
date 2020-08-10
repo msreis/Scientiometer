@@ -1,0 +1,2 @@
+class FundingAgency < ApplicationRecord
+end

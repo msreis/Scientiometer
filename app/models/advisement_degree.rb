@@ -1,0 +1,2 @@
+class AdvisementDegree < ApplicationRecord
+end

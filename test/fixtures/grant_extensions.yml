@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  grant: one
+  value_BRL: 1.5
+  value_USD: 1.5
+  validity_start: 2019-10-25
+  validity_end: 2019-10-25
+
+two:
+  grant: two
+  value_BRL: 1.5
+  value_USD: 1.5
+  validity_start: 2019-10-25
+  validity_end: 2019-10-25

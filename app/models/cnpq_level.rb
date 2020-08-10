@@ -1,0 +1,2 @@
+class CnpqLevel < ApplicationRecord
+end

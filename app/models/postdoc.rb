@@ -1,0 +1,2 @@
+class Postdoc < ApplicationRecord
+end

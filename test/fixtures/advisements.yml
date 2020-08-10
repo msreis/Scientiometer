@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  advisement_degree: one
+  researcher: one
+  intern: one
+  supervisor_is_postdoc: false
+  validity_start: 2019-10-25
+  validity_end: MyString
+
+two:
+  advisement_degree: two
+  researcher: two
+  intern: two
+  supervisor_is_postdoc: false
+  validity_start: 2019-10-25
+  validity_end: MyString

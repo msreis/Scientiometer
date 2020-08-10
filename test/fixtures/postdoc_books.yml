@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  book: one
+  postdoc: one
+  submission: one
+  year: 2020-01-27
+
+two:
+  book: two
+  postdoc: two
+  submission: two
+  year: 2020-01-27

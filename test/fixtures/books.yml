@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  DOI_url: MyString
+  ISBN: MyString
+  qualis: one
+  impact_factor: 1.5
+  collaboration_type: one
+  year: 2020-01-27
+
+two:
+  DOI_url: MyString
+  ISBN: MyString
+  qualis: two
+  impact_factor: 1.5
+  collaboration_type: two
+  year: 2020-01-27

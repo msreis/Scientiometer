@@ -1,0 +1,2 @@
+class CongressRole < ApplicationRecord
+end

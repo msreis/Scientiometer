@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  finish_year: 2019-10-25
+  institution: one
+  delivery_date: 2019-10-25
+  advisement: one
+
+two:
+  finish_year: 2019-10-25
+  institution: two
+  delivery_date: 2019-10-25
+  advisement: two

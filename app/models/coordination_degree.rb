@@ -1,0 +1,2 @@
+class CoordinationDegree < ApplicationRecord
+end

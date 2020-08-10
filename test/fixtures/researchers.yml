@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  researcher_id: MyString
+  ORCID: MyString
+  ingress_date: 2019-10-25
+  email: MyString
+  is_lab_director: false
+  code: MyString
+  employee: one
+
+two:
+  researcher_id: MyString
+  ORCID: MyString
+  ingress_date: 2019-10-25
+  email: MyString
+  is_lab_director: false
+  code: MyString
+  employee: two

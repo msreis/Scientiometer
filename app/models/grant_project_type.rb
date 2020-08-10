@@ -1,0 +1,2 @@
+class GrantProjectType < ApplicationRecord
+end

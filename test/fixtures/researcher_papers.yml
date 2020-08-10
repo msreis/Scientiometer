@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  article: one
+  researcher: one
+  first_author: false
+  last_author: false
+  corresponding_author: false
+
+two:
+  article: two
+  researcher: two
+  first_author: false
+  last_author: false
+  corresponding_author: false

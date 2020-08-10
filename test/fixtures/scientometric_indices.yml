@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  citations_wos: 1
+  h_index_wos: 1.5
+  citations_gs: 1
+  h_index_gs: 1.5
+  researcher: one
+  year: 2019-10-25
+
+two:
+  citations_wos: 1
+  h_index_wos: 1.5
+  citations_gs: 1
+  h_index_gs: 1.5
+  researcher: two
+  year: 2019-10-25
