@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'current_year'
+require 'employee_service'
 
 class FormsController < ApplicationController
   before_action :authorize_request
@@ -12,24 +13,8 @@ class FormsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       # verify if whole step was done
-      employee = Employee.new
-      employee.name = filt_params[:name]
-      employee.is_foundation = true
-      employee.laboratory_id = filt_params[:laboratory_id]
-      employee.role_foundation_level_id = filt_params[:role_foundation_level_id]
-      employee.title_id = filt_params[:title_id]
-
-      employee.save!
-
-      researcher = Researcher.new
-      researcher.researcher_id = filt_params[:researcher_id]
-      researcher.ORCID = filt_params[:orcid]
-      researcher.email = filt_params[:email]
-      researcher.employee_id = employee[:id]
-      researcher.post_doc_type_id = filt_params[:post_doc_type_id]
-      researcher.ingress_date = filt_params[:ingress_date]
-
-      researcher.save!
+      employee = EmployeeService.create_employee(filt_params)
+      ResearcherService.create_researcher(filt_params, employee.id)
 
       @current_account.employee_id = employee[:id]
       @current_account.add_step 1
@@ -85,6 +70,7 @@ class FormsController < ApplicationController
         advisement.researcher_id = current_researcher[:id]
         advisement.intern_id = intern[:id]
         advisement.supervisor_is_postdoc = entry[:postdoc]
+        advisement.postdoc_name = entry[:postdoc_name]
         advisement.submission_id = current_submission[:id]
         advisement.validity_start = entry[:validity_start]
         advisement.validity_end = entry[:validity_end]
@@ -110,7 +96,7 @@ class FormsController < ApplicationController
       prod_grants&.each do |entry|
         grant = ProductivityGrant.new
         grant.researcher_id = current_researcher[:id]
-        grant.cnpq_level_id = entry[:cnpq_level_id][:value]
+        grant.productivity_grant_type_id = entry[:productivity_grant_type][:value]
         grant.is_fb = entry[:is_fb]
         grant.validity_start = entry[:validity_start]
         grant.validity_end = entry[:validity_end]
@@ -157,14 +143,14 @@ class FormsController < ApplicationController
 
         participation.save!
 
-        entry[:postdocs] ||= []
-        entry[:postdocs].each do |entry|
-          pd_paper = PostdocPaper.new
-          pd_paper.article_id = paper[:id]
-          pd_paper.postdoc_id = entry[:value]
-          pd_paper.submission_id = current_submission[:id]
-          pd_paper.year = CurrentYear.current_year
-          pd_paper.save!
+        entry[:postdoc] ||= []
+        entry[:postdoc].each do |entry|
+          std_paper = StudentPaper.new
+          std_paper.article_id = paper[:id]
+          std_paper.intern_id = entry[:value]
+          std_paper.submission_id = current_submission[:id]
+          std_paper.year = CurrentYear.current_year
+          std_paper.save!
         end
 
         entry[:phd] ||= []
@@ -224,14 +210,14 @@ class FormsController < ApplicationController
 
         participation.save!
 
-        entry[:postdocs] ||= []
-        entry[:postdocs].each do |entry|
-          pd_book = PostdocBook.new
-          pd_book.book_id = book[:id]
-          pd_book.postdoc_id = entry[:value]
-          pd_book.submission_id = current_submission[:id]
-          pd_book.year = CurrentYear.current_year
-          pd_book.save!
+        entry[:postdoc] ||= []
+        entry[:postdoc].each do |entry|
+          std_book = StudentBook.new
+          std_book.book_id = book[:id]
+          std_book.intern_id = entry[:value]
+          std_book.submission_id = current_submission[:id]
+          std_book.year = CurrentYear.current_year
+          std_book.save!
         end
 
         entry[:phd] ||= []
@@ -290,7 +276,7 @@ class FormsController < ApplicationController
         participation.researcher_id = current_researcher[:id]
         participation.congress_id = congress[:id]
         participation.year = CurrentYear.current_year
-        participation.congress_role = entry[:congress_role_id]
+        participation.congress_role_id = entry[:congress_role_id]
         participation.submission_id = current_submission[:id]
 
         participation.save!
@@ -385,7 +371,6 @@ class FormsController < ApplicationController
   def step5
     puts 'step 5'
     grants = (params['0'][:items] || [])
-    grant_extensions = (params['1'][:items] || [])
 
     ActiveRecord::Base.transaction do
       grants.each do |entry|
@@ -395,6 +380,7 @@ class FormsController < ApplicationController
         grant.researcher_id = current_researcher[:id]
         grant.grant_project_type_id = entry[:grant_project_type_id]
         grant.grant_participation_type_id = entry[:grant_participation_type_id]
+        grant.grant_currentness_id = entry[:grant_currentness_id]
         grant.funding_agency_id = entry[:funding_agency_id]
         grant.process_number = entry[:process_number]
         grant.value_BRL = entry[:value_brl]
@@ -405,19 +391,6 @@ class FormsController < ApplicationController
         grant.submission_id = current_submission[:id]
 
         grant.save!
-      end
-
-      grant_extensions.each do |entry|
-        extension = GrantExtension.new
-        extension.grant_id = entry[:grant_id]
-        extension.value_BRL = entry[:value_brl]
-        extension.value_USD = entry[:value_usd]
-        extension.validity_start = entry[:validity_start]
-        extension.validity_end = entry[:validity_end]
-
-        extension.submission_id = current_submission[:id]
-
-        extension.save!
       end
 
       @current_account.add_step 5
@@ -436,6 +409,7 @@ class FormsController < ApplicationController
         activity.workload = entry[:workload]
         activity.duration = entry[:duration]
         activity.activity_type_id = entry[:activity_type_id]
+        activity.sub_activity_type_id = entry[:sub_activity_type_id]
         activity.year = CurrentYear.current_year
 
         activity.submission_id = current_submission[:id]
@@ -463,7 +437,7 @@ class FormsController < ApplicationController
         note.save!
       end
 
-      @current_account.add_step 6
+      @current_account.add_step 7
       @current_account.save!
     end
   end

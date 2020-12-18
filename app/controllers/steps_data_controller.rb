@@ -25,7 +25,8 @@ class StepsDataController < ApplicationController
   end
 
   def current_researcher
-    Researcher.find_by(employee_id: @current_account.employee_id)
+    acc = Account.find(current_submission[:account_id])
+    Researcher.find_by(employee_id: acc.employee_id)
   end
 
   def get_step1
@@ -62,10 +63,13 @@ class StepsDataController < ApplicationController
     state_employees_ret = []
     state_employees&.each do |employee|
       entry = {}
+      entry[:id] = employee.id
       entry[:name] = employee.name
       entry[:role_foundation_level_id] = employee.role_foundation_level_id
+      entry[:role_foundation_level_description] = RoleFoundationLevel.find(employee.role_foundation_level_id).description
       current_employee[:laboratory_id] = employee.laboratory_id
       entry[:title_id] = employee.title_id
+      entry[:title_name] = Title.find(employee.title_id).name
       current_submission[:id] = employee.submission_id
       state_employees_ret << entry
     end
@@ -81,10 +85,13 @@ class StepsDataController < ApplicationController
     found_employees_ret = []
     found_employees&.each do |employee|
       entry = {}
+      entry[:id] = employee.id
       entry[:name] = employee.name
       entry[:role_foundation_level_id] = employee.role_foundation_level_id
+      entry[:role_foundation_level_description] = RoleFoundationLevel.find(employee.role_foundation_level_id).description
       current_employee[:laboratory_id] = employee.laboratory_id
       entry[:title_id] = employee.title_id
+      entry[:title_name] = Title.find(employee.title_id).name
       current_submission[:id] = employee.submission_id
       found_employees_ret << entry
     end
@@ -99,11 +106,15 @@ class StepsDataController < ApplicationController
     students_ret = []
     students&.each do |advisement|
       entry = {}
-      entry[:name] = Intern.find(advisement[:intern_id])[:name]
+      intern = Intern.find(advisement[:intern_id])
+      entry[:name] = intern.name
+      entry[:id] = intern.id
 
       entry[:advisement_degree] = {}
       entry[:advisement_degree][:value] = advisement.advisement_degree_id
+      entry[:advisement_degree][:text] = AdvisementDegree.find(advisement.advisement_degree_id).degree
       entry[:postdoc] = advisement.supervisor_is_postdoc
+      entry[:postdoc_name] = advisement.postdoc_name
       entry[:validity_start] = advisement.validity_start
       entry[:validity_end] = advisement.validity_end
 
@@ -115,6 +126,7 @@ class StepsDataController < ApplicationController
       scholarships.each do |scholarship|
         ship_entry = {}
         ship_entry[:funding_agency_id] = scholarship.funding_agency_id
+        ship_entry[:funding_agency_name] = FundingAgency.find(scholarship.funding_agency_id).name
         ship_entry[:process_number] = scholarship.process_number
         ship_entry[:value_BRL] = scholarship.total_value_BRL
         ship_entry[:value_USD] = scholarship.total_value_USD
@@ -124,6 +136,7 @@ class StepsDataController < ApplicationController
         scholarships_ret << ship_entry
       end
       entry[:scholarships] = scholarships_ret
+      entry[:nScholarships] = scholarships_ret.size
 
       students_ret << entry
     end
@@ -137,8 +150,9 @@ class StepsDataController < ApplicationController
     prod_grants_ret = []
     prod_grants&.each do |grant|
       entry = {}
-      entry[:cnpq_level] = {}
-      entry[:cnpq_level][:value] = grant.cnpq_level_id
+      entry[:productivity_grant_type] = {}
+      entry[:productivity_grant_type][:value] = grant.productivity_grant_type_id
+      entry[:productivity_grant_type][:text] = ProductivityGrantType.find(grant.productivity_grant_type_id).name
       entry[:is_fb] = grant.is_fb
       entry[:validity_start] = grant.validity_start
       entry[:validity_end] = grant.validity_end
@@ -176,56 +190,63 @@ class StepsDataController < ApplicationController
       entry[:last_author] = participation&.last_author
       entry[:corresponding_author] = participation&.corresponding_author
 
-      entry[:postdocs] = []
-      postdocs = PostdocPaper.where(
+      entry[:postdoc] = []
+      post_doc_degree = AdvisementDegree.find_by(degree: 'Pós-doutorado')
+      post_doc_adv = Advisement.where(advisement_degree_id: post_doc_degree[:id], submission_id: current_submission[:id])
+      postdocs = StudentPaper.where(
+        intern_id: post_doc_adv.map { |adv| adv[:intern_id] },
         article_id: paper[:id],
         submission_id: current_submission[:id]
       )
       postdocs.each do |pd_paper|
         pd = {}
-        pd[:value] = pd_paper.postdoc_id
-        entry[:postdocs] << pd
+        pd[:value] = pd_paper.intern_id
+        pd[:text] = Intern.find(pd_paper.intern_id).name
+        entry[:postdoc] << pd
       end
 
       entry[:phd] = []
-      degree = AdvisementDegree.find_by(degree: 'Doutorado')
-      phd_adv = Advisement.find_by(advisement_degree_id: degree[:id])
+      phd_degree = AdvisementDegree.find_by(degree: 'Doutorado')
+      phd_adv = Advisement.where(advisement_degree_id: phd_degree[:id], submission_id: current_submission[:id])
       phds = StudentPaper.where(
-        intern_id: phd_adv&.intern_id,
+        intern_id: phd_adv.map { |adv| adv[:intern_id] },
         article_id: paper[:id],
         submission_id: current_submission[:id]
       )
       phds.each do |std_paper|
         phd = {}
         phd[:value] = std_paper.intern_id
+        phd[:text] = Intern.find(std_paper.intern_id).name
         entry[:phd] << phd
       end
 
       entry[:msc] = []
-      degree = AdvisementDegree.find_by(degree: 'Mestrado')
-      msc_adv = Advisement.find_by(advisement_degree_id: degree[:id])
+      msc_degree = AdvisementDegree.find_by(degree: 'Mestrado')
+      msc_adv = Advisement.where(advisement_degree_id: msc_degree[:id], submission_id: current_submission[:id])
       mscs = StudentPaper.where(
-        intern_id: msc_adv&.intern_id,
+        intern_id: msc_adv.map { |adv| adv[:intern_id] },
         article_id: paper[:id],
         submission_id: current_submission[:id]
       )
       mscs.each do |std_paper|
         msc = {}
         msc[:value] = std_paper.intern_id
+        msc[:text] = Intern.find(std_paper.intern_id).name
         entry[:msc] << msc
       end
 
       entry[:ic] = []
-      degree = AdvisementDegree.find_by(degree: 'Iniciação Científica')
-      ic_adv = Advisement.find_by(advisement_degree_id: degree[:id])
+      ic_degree = AdvisementDegree.find_by(degree: 'Iniciação Científica')
+      ic_adv = Advisement.where(advisement_degree_id: ic_degree[:id], submission_id: current_submission[:id])
       ics = StudentPaper.where(
-        intern_id: ic_adv&.intern_id,
+        intern_id: ic_adv.map { |adv| adv[:intern_id] },
         article_id: paper[:id],
         submission_id: current_submission[:id]
       )
       ics.each do |std_paper|
         ic = {}
         ic[:value] = std_paper.intern_id
+        ic[:text] = Intern.find(std_paper.intern_id).name
         entry[:ic] << ic
       end
       papers_ret << entry
@@ -255,61 +276,64 @@ class StepsDataController < ApplicationController
       entry[:last_author] = participation&.last_author
       entry[:corresponding_author] = participation&.corresponding_author
 
-      entry[:postdocs] = []
-      postdocs = PostdocBook.where(
+      entry[:postdoc] = []
+      post_doc_degree = AdvisementDegree.find_by(degree: 'Pós-doutorado')
+      post_doc_adv = Advisement.where(advisement_degree_id: post_doc_degree[:id], submission_id: current_submission[:id])
+      postdocs = StudentBook.where(
+        intern_id: post_doc_adv.map { |adv| adv[:intern_id] },
         book_id: book[:id],
         submission_id: current_submission[:id]
       )
-      postdocs.each do |pd_book|
+      postdocs.each do |std_book|
         pd = {}
-        pd[:value] = pd_book.postdoc_id
-        entry[:postdocs] << pd
+        pd[:value] = std_book.intern_id
+        pd[:text] = Intern.find(std_book.intern_id).name
+        entry[:postdoc] << pd
       end
 
       entry[:phd] = []
-      degree = AdvisementDegree.find_by(degree: 'Doutorado')
-      phd_adv = Advisement.find_by(advisement_degree_id: degree[:id])
-      phds = if phd_adv
-               StudentBook.where(
-                 intern_id: phd_adv&.intern_id,
-                 book_id: book[:id],
-                 submission_id: current_submission[:id]
-               )
-             else
-               []
-             end
+      phd_degree = AdvisementDegree.find_by(degree: 'Doutorado')
+      phd_adv = Advisement.where(advisement_degree_id: phd_degree[:id], submission_id: current_submission[:id])
+      phds = StudentBook.where(
+        intern_id: phd_adv.map { |adv| adv[:intern_id] },
+        book_id: book[:id],
+        submission_id: current_submission[:id]
+      )
       phds.each do |std_book|
         phd = {}
         phd[:value] = std_book.intern_id
+        phd[:text] = Intern.find(std_book.intern_id).name
         entry[:phd] << phd
       end
 
       entry[:msc] = []
-      degree = AdvisementDegree.find_by(degree: 'Mestrado')
-      msc_adv = Advisement.find_by(advisement_degree_id: degree[:id])
+      msc_degree = AdvisementDegree.find_by(degree: 'Mestrado')
+      msc_adv = Advisement.where(advisement_degree_id: msc_degree[:id], submission_id: current_submission[:id])
 
       mscs = StudentBook.where(
-        intern_id: msc_adv&.intern_id,
+        intern_id: msc_adv.map { |adv| adv[:intern_id] },
         book_id: book[:id],
         submission_id: current_submission[:id]
       )
       mscs.each do |std_book|
         msc = {}
         msc[:value] = std_book.intern_id
+        msc[:text] = Intern.find(std_book.intern_id).name
         entry[:msc] << msc
       end
 
       entry[:ic] = []
-      degree = AdvisementDegree.find_by(degree: 'Iniciação Científica')
-      ic_adv = Advisement.find_by(advisement_degree_id: degree[:id])
+      ic_degree = AdvisementDegree.find_by(degree: 'Iniciação Científica')
+      ic_adv = Advisement.where(advisement_degree_id: ic_degree[:id], submission_id: current_submission[:id])
       ics = StudentBook.where(
-        intern_id: ic_adv&.intern_id,
+        intern_id: ic_adv.map { |adv| adv[:intern_id] },
         book_id: book[:id],
         submission_id: current_submission[:id]
       )
       ics.each do |std_book|
         ic = {}
         ic[:value] = std_book.intern_id
+        ic[:text] = Intern.find(std_book.intern_id).name
         entry[:ic] << ic
       end
       books_ret << entry
@@ -333,7 +357,9 @@ class StepsDataController < ApplicationController
     )
     congresses_ret = []
     congresses.each do |participation|
-      entry[:congress_role_id] = participation.congress_role
+      entry = {}
+      entry[:congress_role_id] = participation.congress_role_id
+      entry[:role] = CongressRole.find(participation.congress_role_id).role
       congress = Congress.find(participation.congress_id)
       entry[:name] = congress.name
       entry[:country] = congress.country
@@ -355,9 +381,12 @@ class StepsDataController < ApplicationController
       entry = {}
       entry[:institution] = {}
       entry[:institution][:value] = thesis.institution_id
+      entry[:institution][:text] = Institution.find(thesis.institution_id).name
       entry[:delivery_date] = thesis.delivery_date
       entry[:advisement] = {}
       entry[:advisement][:value] = thesis.advisement_id
+      advisement = Advisement.find(thesis.advisement_id)
+      entry[:name] = Intern.find(advisement.intern_id).name
       theses_ret << entry
     end
     return_package << { items: theses_ret }
@@ -370,10 +399,13 @@ class StepsDataController < ApplicationController
       entry = {}
       entry[:postgraduate_program] = {}
       entry[:postgraduate_program][:value] = accreditation.postgraduate_program_id
+      entry[:name] = PostgraduateProgram.find(accreditation.postgraduate_program_id).name
       entry[:institution] = {}
       entry[:institution][:value] = accreditation.institution_id
+      entry[:institution][:text] = Institution.find(accreditation.institution_id).name
       entry[:degree] = {}
       entry[:degree][:value] = accreditation.course_degree_id
+      entry[:degree][:text] = CourseDegree.find(accreditation.course_degree_id).degree
       accreditation_ret << entry
     end
     return_package << { items: accreditation_ret }
@@ -388,7 +420,9 @@ class StepsDataController < ApplicationController
       entry[:name] = subject.name
       entry[:code] = subject.code
       entry[:postgraduate_program_id] = ministered.postgraduate_program_id
+      entry[:postgraduate_program_name] = PostgraduateProgram.find(ministered.postgraduate_program_id).name
       entry[:institution_id] = ministered.institution_id
+      entry[:institution_name] = Institution.find(ministered.institution_id).name
       ministered_classes_ret << entry
     end
     return_package << { items: ministered_classes_ret }
@@ -403,7 +437,9 @@ class StepsDataController < ApplicationController
       entry[:lecture_count] = lecture.lecture_count
       entry[:workload] = lecture.workload
       entry[:postgraduate_program_id] = lecture.postgraduate_program_id
+      entry[:postgraduate_program_name] = PostgraduateProgram.find(lecture.postgraduate_program_id).name if lecture.postgraduate_program_id
       entry[:institution_id] = lecture.institution_id
+      entry[:institution_name] = Institution.find(lecture.institution_id).name
       lectures_ret << entry
     end
     return_package << { items: lectures_ret }
@@ -416,7 +452,9 @@ class StepsDataController < ApplicationController
       entry = {}
       entry[:name] = coordination.name
       entry[:course_classification_id] = coordination.course_classification_id
+      entry[:course_classification_classification] = CourseClassification.find(coordination.course_classification_id).classification
       entry[:coordination_degree_id] = coordination.coordination_degree_id
+      entry[:coordination_degree_degree] = CoordinationDegree.find(coordination.coordination_degree_id).degree
       entry[:workload] = coordination.workload
       coordinations_ret << entry
     end
@@ -437,8 +475,13 @@ class StepsDataController < ApplicationController
     grants.each do |grant|
       entry = {}
       entry[:grant_project_type_id] = grant.grant_project_type_id
+      entry[:grant_project_type_name] = GrantProjectType.find(grant.grant_project_type_id).name
       entry[:grant_participation_type_id] = grant.grant_participation_type_id
+      entry[:grant_participation_type_name] = GrantParticipationType.find(grant.grant_participation_type_id).name
       entry[:funding_agency_id] = grant.funding_agency_id
+      entry[:funding_agency_name] = FundingAgency.find(grant.funding_agency_id).name
+      entry[:grant_currentness_id] = grant.grant_currentness_id
+      entry[:grant_currentness_name] = GrantCurrentness.find(grant.grant_currentness_id).name
       entry[:process_number] = grant.process_number
       entry[:value_brl] = grant.value_BRL
       entry[:value_usd] = grant.value_USD
@@ -447,22 +490,6 @@ class StepsDataController < ApplicationController
       grants_ret << entry
     end
     return_package << { items: grants_ret }
-
-    grant_extensions = GrantExtension.where(
-      submission_id: current_submission[:id]
-    )
-
-    grant_extensions_ret = []
-    grant_extensions.each do |extension|
-      entry = {}
-      entry[:grant_id] = extension.grant_id
-      entry[:value_brl] = extension.value_BRL
-      entry[:value_usd] = extension.value_USD
-      entry[:validity_start] = extension.validity_start
-      entry[:validity_end] = extension.validity_end
-      grant_extensions_ret << entry
-    end
-    return_package << { items: grant_extensions_ret }
 
     render json: return_package
   end
@@ -477,10 +504,12 @@ class StepsDataController < ApplicationController
     activities_ret = []
     activities.each do |activity|
       entry = {}
-      entry[:description] = activity.description
       entry[:workload] = activity.workload
       entry[:duration] = activity.duration
       entry[:activity_type_id] = activity.activity_type_id
+      entry[:activity_type_name] = ActivityType.find(activity.activity_type_id).name
+      entry[:sub_activity_type_id] = activity.sub_activity_type_id
+      entry[:sub_activity_type_name] = SubActivityType.find(activity.sub_activity_type_id).name
 
       activities_ret << entry
     end

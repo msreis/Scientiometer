@@ -3,8 +3,11 @@ class RoleFoundationLevelsController < ApplicationController
 
   # GET /role_foundation_levels
   def index
-    @role_foundation_levels = RoleFoundationLevel.all
-
+    if role_foundation_level_params[:categories]
+      @role_foundation_levels = RoleFoundationLevel.all.to_a.select { |role| role.categories.include? role_foundation_level_params[:categories] }
+    else
+      @role_foundation_levels = RoleFoundationLevel.all
+    end
     render json: @role_foundation_levels
   end
 
@@ -46,6 +49,6 @@ class RoleFoundationLevelsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def role_foundation_level_params
-      params.permit(:description)
+      params.permit(:description, :categories)
     end
 end

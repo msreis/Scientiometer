@@ -2,6 +2,7 @@
 
 class Account < ApplicationRecord
   belongs_to :profile
+  has_many :approval_histories
   has_secure_password
   validates :username, presence: true, uniqueness: true
   serialize :completed_steps, Hash

@@ -46,6 +46,6 @@ class ProductivityGrantsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def productivity_grant_params
-      params.permit(:cnpq_level_id, :fb_level_id, :validity_start, :validity_end, :researcher_id, :productivity_scholarship_id)
+      params.permit(:productivity_grant_type_id, :fb_level_id, :validity_start, :validity_end, :researcher_id, :productivity_scholarship_id)
     end
 end

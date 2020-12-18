@@ -91,11 +91,15 @@ class SubmissionsController < ApplicationController
   def accept
     return if @current_access_level < 2
 
-    sub = Submission.find(params[:id])
-    sub.accepted = true
-    sub.reproved = false
-    sub.submitted = false
-    sub.save!
+    ActiveRecord::Base.transaction do
+      sub = Submission.find(params[:id])
+      sub.accepted = true
+      sub.reproved = false
+      sub.submitted = false
+      sub.save!
+
+      create_approval_history(params[:account], params[:approval_action], params[:id], params[:comment])
+    end
 
     render nothing: true, status: :ok
   end
@@ -103,22 +107,34 @@ class SubmissionsController < ApplicationController
   def reprove
     return if @current_access_level < 2
 
-    sub = Submission.find(params[:id])
-    sub.reproved = true
-    sub.accepted = false
-    sub.submitted = false
-    sub.save!
+    puts params
+
+    ActiveRecord::Base.transaction do
+      sub = Submission.find(params[:id])
+      sub.reproved = true
+      sub.accepted = false
+      sub.submitted = false
+      sub.save!
+
+      create_approval_history(params[:account], params[:approval_action], params[:id], params[:comment])
+    end
 
     render nothing: true, status: :ok
   end
 
   def submit
 
-    sub = Submission.find(params[:id])
-    sub.submitted = true
-    sub.reproved = false
-    sub.accepted = false
-    sub.save!
+    puts params
+
+    ActiveRecord::Base.transaction do
+      sub = Submission.find(params[:id])
+      sub.submitted = true
+      sub.reproved = false
+      sub.accepted = false
+      sub.save!
+
+      create_approval_history(params[:account], params[:approval_action], params[:id], params[:comment])
+    end
 
     render nothing: true, status: :ok
   end
@@ -158,5 +174,17 @@ class SubmissionsController < ApplicationController
   # Only allow a trusted parameter "white list" through.
   def submission_params
     params.require(:submission).permit(:accepted)
+  end
+
+  def create_approval_history(account_id, approval_action_name, submission_id, comment)
+    account = Account.find(account_id)
+    approval_action = ApprovalAction.find_by(name: approval_action_name)
+
+    ApprovalHistory.create(
+        submission_id: submission_id,
+        account_id: account.id,
+        approval_action_id: approval_action.id,
+        comment: comment
+    ).save!
   end
 end

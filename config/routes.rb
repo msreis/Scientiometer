@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :grant_currentnesses
+  resources :productivity_grant_types
+  resources :approval_histories
+  resources :approval_actions
   resources :sub_activity_types
   resources :postdoc_books
   resources :student_books
@@ -52,7 +56,6 @@ Rails.application.routes.draw do
   resources :line_of_researches
   resources :productivity_grants
   resources :fb_levels
-  resources :cnpq_levels
   resources :advisements
   resources :advisement_degrees
   resources :interns
@@ -76,10 +79,12 @@ Rails.application.routes.draw do
   get '/submissions_summary', to: 'submissions#summary'
   get '/mscs', to: 'interns#mscs'
   get '/phds', to: 'interns#phds'
+  get '/postphds', to: 'interns#postphds'
   get '/ics', to: 'interns#ics'
   get '/adv_by_res', to: 'advisements#advisements_by_researcher'
   post '/accept/:id', to: 'submissions#accept'
   post '/reprove/:id', to: 'submissions#reprove'
   post '/submit/:id', to: 'submissions#submit'
+  get '/approval_histories/submissions/:id', to: 'approval_histories#get_by_submission'
 end
 # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

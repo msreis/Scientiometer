@@ -46,8 +46,9 @@ class AdvisementsController < ApplicationController
     # [{adv_id: X, intern_name: XX}, ...]
     advisements = []
     p current_researcher
+    post_doc_degree_id = AdvisementDegree.find_by(degree: 'Pós-doutorado').id
     found_adv = Advisement.where(researcher_id: current_researcher[:id])
-    found_adv.each do |entry|
+    found_adv.filter { |adv| adv.advisement_degree_id != post_doc_degree_id  }.each do |entry|
       hash = {}
       intern = Intern.find(entry[:intern_id])
       degree = AdvisementDegree.find(entry[:advisement_degree_id])

@@ -1,4 +1,4 @@
 class ProductivityGrant < ApplicationRecord
-  belongs_to :cnpq_level
   belongs_to :researcher
+  belongs_to :productivity_grant_type
 end

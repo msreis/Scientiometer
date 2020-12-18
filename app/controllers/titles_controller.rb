@@ -3,7 +3,7 @@ class TitlesController < ApplicationController
 
   # GET /titles
   def index
-    @titles = Title.all
+    @titles = Title.where(title_params)
 
     render json: @titles
   end
@@ -46,6 +46,6 @@ class TitlesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def title_params
-      params.permit(:name)
+      params.permit(:name, :is_researcher)
     end
 end

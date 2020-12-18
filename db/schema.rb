@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_09_060653) do
+ActiveRecord::Schema.define(version: 2020_11_13_014454) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "username"
@@ -78,11 +78,30 @@ ActiveRecord::Schema.define(version: 2020_08_09_060653) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "submission_id"
+    t.string "postdoc_name"
     t.index ["advisement_degree_id"], name: "index_advisements_on_advisement_degree_id"
     t.index ["intern_id"], name: "index_advisements_on_intern_id"
     t.index ["postdoc_id"], name: "index_advisements_on_postdoc_id"
     t.index ["researcher_id"], name: "index_advisements_on_researcher_id"
     t.index ["submission_id"], name: "index_advisements_on_submission_id"
+  end
+
+  create_table "approval_actions", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "approval_histories", force: :cascade do |t|
+    t.integer "account_id"
+    t.integer "submission_id"
+    t.integer "approval_action_id"
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_approval_histories_on_account_id"
+    t.index ["approval_action_id"], name: "index_approval_histories_on_approval_action_id"
+    t.index ["submission_id"], name: "index_approval_histories_on_submission_id"
   end
 
   create_table "articles", force: :cascade do |t|
@@ -117,12 +136,6 @@ ActiveRecord::Schema.define(version: 2020_08_09_060653) do
 
   create_table "capes_concepts", force: :cascade do |t|
     t.string "concept"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "cnpq_levels", force: :cascade do |t|
-    t.string "level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -221,6 +234,12 @@ ActiveRecord::Schema.define(version: 2020_08_09_060653) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "grant_currentnesses", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "grant_extensions", force: :cascade do |t|
     t.integer "grant_id"
     t.float "value_BRL"
@@ -259,7 +278,9 @@ ActiveRecord::Schema.define(version: 2020_08_09_060653) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "submission_id"
+    t.integer "grant_currentness_id"
     t.index ["funding_agency_id"], name: "index_grants_on_funding_agency_id"
+    t.index ["grant_currentness_id"], name: "index_grants_on_grant_currentness_id"
     t.index ["grant_participation_type_id"], name: "index_grants_on_grant_participation_type_id"
     t.index ["grant_project_type_id"], name: "index_grants_on_grant_project_type_id"
     t.index ["researcher_id"], name: "index_grants_on_researcher_id"
@@ -461,8 +482,14 @@ ActiveRecord::Schema.define(version: 2020_08_09_060653) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "productivity_grant_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "productivity_grants", force: :cascade do |t|
-    t.integer "cnpq_level_id"
+    t.integer "productivity_grant_type_id"
     t.boolean "is_fb"
     t.date "validity_start"
     t.date "validity_end"
@@ -470,7 +497,7 @@ ActiveRecord::Schema.define(version: 2020_08_09_060653) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "submission_id"
-    t.index ["cnpq_level_id"], name: "index_productivity_grants_on_cnpq_level_id"
+    t.index ["productivity_grant_type_id"], name: "index_productivity_grants_on_productivity_grant_type_id"
     t.index ["researcher_id"], name: "index_productivity_grants_on_researcher_id"
     t.index ["submission_id"], name: "index_productivity_grants_on_submission_id"
   end
@@ -556,6 +583,7 @@ ActiveRecord::Schema.define(version: 2020_08_09_060653) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "categories", default: "--- []\n"
   end
 
   create_table "scholarships", force: :cascade do |t|
@@ -669,6 +697,7 @@ ActiveRecord::Schema.define(version: 2020_08_09_060653) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_researcher", default: false
   end
 
 end

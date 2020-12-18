@@ -3,7 +3,7 @@ class SubActivityTypesController < ApplicationController
 
   # GET /sub_activity_types
   def index
-    @sub_activity_types = SubActivityType.all
+    @sub_activity_types = SubActivityType.where(sub_activity_type_params)
 
     render json: @sub_activity_types
   end
@@ -46,6 +46,6 @@ class SubActivityTypesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def sub_activity_type_params
-      params.require(:sub_activity_type).permit(:name, :activity_type_id)
+      params.permit(:name, :activity_type_id)
     end
 end

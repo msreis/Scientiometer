@@ -12,104 +12,105 @@
 ################################################################################
 ## PQ level or foundation role ###
 pq_levels_roles = [
-  'I',
-  'II',
-  'III',
-  'IV',
-  'V',
-  'VI',
-  'Agente de apoio à pesquisa científica e tecnológica I',
-  'Agente de apoio à pesquisa científica e tecnológica II',
-  'Agente de apoio à pesquisa científica e tecnológica III',
-  'Agente de apoio à pesquisa científica e tecnológica IV',
-  'Agente de apoio à pesquisa científica e tecnológica V',
-  'Agente de apoio à pesquisa científica e tecnológica VI',
-  'Agente de saúde',
-  'Analista administrativo',
-  'Analista administrativo junior',
-  'Analista administrativo pleno',
-  'Analista administrativo senior',
-  'Analista de laboratório de desenvolvimento I',
-  'Analista de laboratório de desenvolvimento II',
-  'Analista de laboratório de desenvolvimento III',
-  'Analista de processos',
-  'Analista de sistemas junior',
-  'Analista de sistemas pleno',
-  'Analista de sistemas senior',
-  'Assistente administrativo',
-  'Assistente de organização e pesquisa',
-  'Assistente executivo',
-  'Assistente técnico de apoio à pesquisa científica e tecnológica I',
-  'Assistente técnico de apoio à pesquisa científica e tecnológica II',
-  'Assistente técnico de apoio à pesquisa científica e tecnológica III',
-  'Assistente técnico de apoio à pesquisa científica e tecnológica IV',
-  'Assistente técnico de apoio à pesquisa científica e tecnológica V',
-  'Assistente técnico de apoio à pesquisa científica e tecnológica VI',
-  'Auxiliar administrativo',
-  'Auxiliar de apoio à pesquisa científica e tecnológica I',
-  'Auxiliar de apoio à pesquisa científica e tecnológica II',
-  'Auxiliar de laboratório',
-  'Auxiliar de laboratório I',
-  'Auxiliar de limpeza',
-  'Auxiliar de produção',
-  'Auxiliar de saúde',
-  'Auxiliar de serviços gerais',
-  'Bioinformata',
-  'Biólogo',
-  'Biotecnologista',
-  'Chefe I',
-  'Coordenador',
-  'Coordenador de produção',
-  'Educador',
-  'Especialista de laboratório',
-  'Gerente de produção',
-  'Gestor de projetos',
-  'Jovem aprendiz',
-  'Liderança científica',
-  'Médico',
-  'Médico Veterinário',
-  'Oficial administrativo',
-  'Oficial de apoio à pesquisa científica e tecnológica I',
-  'Oficial de apoio à pesquisa científica e tecnológica II',
-  'Oficial de apoio à pesquisa científica e tecnológica III',
-  'Oficial de apoio à pesquisa científica e tecnológica IV',
-  'Oficial de apoio à pesquisa científica e tecnológica V',
-  'Oficial de apoio à pesquisa científica e tecnológica VI',
-  'Oficial de serviços gerais',
-  'Oficial operacional',
-  'Pesquisador Fundação Butantan I',
-  'Pesquisador Fundação Butantan II',
-  'Pesquisador Fundação Butantan III',
-  'Secretária bilíngue',
-  'Servente',
-  'Supervisor',
-  'Supervisor de produção',
-  'Técnico de apoio à pesquisa científica e tecnológica I',
-  'Técnico de apoio à pesquisa científica e tecnológica II',
-  'Técnico de apoio à pesquisa científica e tecnológica III',
-  'Técnico de apoio à pesquisa científica e tecnológica IV',
-  'Técnico de apoio à pesquisa científica e tecnológica V',
-  'Técnico de apoio à pesquisa científica e tecnológica VI',
-  'Técnico de laboratório',
-  'Técnico de laboratório I',
-  'Técnico de microscopia',
-  'Técnico de produção I',
-  'Técnico de produção II',
-  'Técnico em educação',
-  'Técnico em exposição',
-  'Tecnologista de laboratório de artrópodes I',
-  'Tecnologista de laboratório de desenvolvimento I',
-  'Tecnologista de laboratório de desenvolvimento II',
-  'Tecnologista de laboratório de desenvolvimento III',
-  'Tecnologista de produção I',
-  'Tecnologista de produção II',
-  'Tecnologista de produção III',
-  'Veterinário',
-  'Outro'
+  ['I', ["pesquisador"]],
+  ['II', ["pesquisador"]],
+  ['III', ["pesquisador"]],
+  ['IV', ["pesquisador"]],
+  ['V', ["pesquisador"]],
+  ['VI', ["pesquisador"]],
+  ['Agente de apoio à pesquisa científica e tecnológica I', ["estatutário"]],
+  ['Agente de apoio à pesquisa científica e tecnológica II', ["estatutário"]],
+  ['Agente de apoio à pesquisa científica e tecnológica III', ["estatutário"]],
+  ['Agente de apoio à pesquisa científica e tecnológica IV', ["estatutário"]],
+  ['Agente de apoio à pesquisa científica e tecnológica V', ["estatutário"]],
+  ['Agente de apoio à pesquisa científica e tecnológica VI', ["estatutário"]],
+  ['Agente de saúde', ["estatutário"]],
+  ['Analista administrativo', ["pesquisador"]],
+  ['Analista administrativo junior', ["fundação"]],
+  ['Analista administrativo pleno', ["fundação"]],
+  ['Analista administrativo senior', ["fundação"]],
+  ['Analista de laboratório de desenvolvimento I', ["fundação"]],
+  ['Analista de laboratório de desenvolvimento II', ["fundação"]],
+  ['Analista de laboratório de desenvolvimento III', ["fundação"]],
+  ['Analista de processos', ["fundação"]],
+  ['Analista de sistemas junior', ["fundação"]],
+  ['Analista de sistemas pleno', ["fundação"]],
+  ['Analista de sistemas senior', ["fundação"]],
+  ['Assistente administrativo', ["pesquisador", "fundação"]],
+  ['Assistente de organização e pesquisa', ["fundação"]],
+  ['Assistente executivo', ["fundação"]],
+  ['Assistente técnico de apoio à pesquisa científica e tecnológica I', ["estatutário"]],
+  ['Assistente técnico de apoio à pesquisa científica e tecnológica II', ["estatutário"]],
+  ['Assistente técnico de apoio à pesquisa científica e tecnológica III', ["estatutário"]],
+  ['Assistente técnico de apoio à pesquisa científica e tecnológica IV', ["estatutário"]],
+  ['Assistente técnico de apoio à pesquisa científica e tecnológica V', ["estatutário"]],
+  ['Assistente técnico de apoio à pesquisa científica e tecnológica VI', ["estatutário"]],
+  ['Auxiliar administrativo', ["pesquisador", "estatutário"]],
+  ['Auxiliar de apoio à pesquisa científica e tecnológica I', ["estatutário"]],
+  ['Auxiliar de apoio à pesquisa científica e tecnológica II', ["estatutário"]],
+  ['Auxiliar de laboratório', ["estatutário"]],
+  ['Auxiliar de laboratório I', ["fundação"]],
+  ['Auxiliar de limpeza', ["fundação"]],
+  ['Auxiliar de produção', ["fundação"]],
+  ['Auxiliar de saúde', ["estatutário"]],
+  ['Auxiliar de serviços gerais', ["estatutário"]],
+  ['Bioinformata', ["pesquisador", "fundação"]],
+  ['Biólogo', ["fundação"]],
+  ['Biotecnologista', ["fundação"]],
+  ['Chefe I', ["estatutário"]],
+  ['Colaborador', ["pesquisador"]],
+  ['Coordenador', ["fundação"]],
+  ['Coordenador de produção', ["fundação"]],
+  ['Educador', ["fundação"]],
+  ['Especialista de laboratório', ["fundação"]],
+  ['Gerente de produção', ["fundação"]],
+  ['Gestor de projetos', ["pesquisador", "estatutário"]],
+  ['Jovem aprendiz', ["fundação"]],
+  ['Liderança científica', ["pesquisador"]],
+  ['Médico', ["estatutário"]],
+  ['Médico Veterinário', ["fundação"]],
+  ['Oficial administrativo', ["estatutário"]],
+  ['Oficial de apoio à pesquisa científica e tecnológica I', ["estatutário"]],
+  ['Oficial de apoio à pesquisa científica e tecnológica II', ["estatutário"]],
+  ['Oficial de apoio à pesquisa científica e tecnológica III', ["estatutário"]],
+  ['Oficial de apoio à pesquisa científica e tecnológica IV', ["estatutário"]],
+  ['Oficial de apoio à pesquisa científica e tecnológica V', ["estatutário"]],
+  ['Oficial de apoio à pesquisa científica e tecnológica VI', ["estatutário"]],
+  ['Oficial de serviços gerais', ["estatutário"]],
+  ['Oficial operacional', ["estatutário"]],
+  ['Pesquisador Fundação Butantan I', ["pesquisador"]],
+  ['Pesquisador Fundação Butantan II', ["pesquisador"]],
+  ['Pesquisador Fundação Butantan III', ["pesquisador"]],
+  ['Secretária bilíngue', ["fundação"]],
+  ['Servente', ["fundação"]],
+  ['Supervisor', ["fundação"]],
+  ['Supervisor de produção', ["pesquisador", "fundação"]],
+  ['Técnico de apoio à pesquisa científica e tecnológica I', ["estatutário"]],
+  ['Técnico de apoio à pesquisa científica e tecnológica II', ["estatutário"]],
+  ['Técnico de apoio à pesquisa científica e tecnológica III', ["estatutário"]],
+  ['Técnico de apoio à pesquisa científica e tecnológica IV', ["estatutário"]],
+  ['Técnico de apoio à pesquisa científica e tecnológica V', ["estatutário"]],
+  ['Técnico de apoio à pesquisa científica e tecnológica VI', ["estatutário"]],
+  ['Técnico de laboratório', ["estatutário"]],
+  ['Técnico de laboratório I', ["fundação"]],
+  ['Técnico de microscopia', ["fundação"]],
+  ['Técnico de produção I', ["fundação"]],
+  ['Técnico de produção II', ["fundação"]],
+  ['Técnico em educação', ["fundação"]],
+  ['Técnico em exposição', ["fundação"]],
+  ['Tecnologista de laboratório de artrópodes I', ["fundação"]],
+  ['Tecnologista de laboratório de desenvolvimento I', ["pesquisador", "fundação"]],
+  ['Tecnologista de laboratório de desenvolvimento II', ["pesquisador", "fundação"]],
+  ['Tecnologista de laboratório de desenvolvimento III', ["pesquisador", "fundação"]],
+  ['Tecnologista de produção I', ["fundação"]],
+  ['Tecnologista de produção II', ["fundação"]],
+  ['Tecnologista de produção III', ["fundação"]],
+  ['Veterinário', ["fundação"]],
+  ['Outro', ["pesquisador", "fundação", "estatutário"]]
 ]
 
 pq_levels_roles.each do |role|
-  RoleFoundationLevel.create(description: role)
+  RoleFoundationLevel.create(description: role[0], categories: role[1])
 end
 
 ## Grant agencies
@@ -146,6 +147,8 @@ institutions = [
   'IB – USP',
   'IBU',
   'IBU / IPT / USP',
+  'ICB – USP',
+  'IME – USP',
   'IMT – USP',
   'IP – USP',
   'IQ – USP',
@@ -169,15 +172,15 @@ end
 ####
 
 titles = [
-  'Ensino fundamental',
-  'Ensino médio',
-  'Ensino médio técnico',
-  'Graduação',
-  'Mestrado',
-  'Doutorado'
+  ['Ensino fundamental', false],
+  ['Ensino médio', false],
+  ['Ensino médio técnico', false],
+  ['Graduação', true],
+  ['Mestrado', true],
+  ['Doutorado', true]
 ]
 titles.each do |title|
-  Title.create(name: title)
+  Title.create(name: title[0], is_researcher: title[1])
 end
 
 ####
@@ -203,17 +206,18 @@ end
 
 ######
 
-cnpq_levels = %w[
-  1A
-  1B
-  1C
-  1D
-  2
-  SR
+productivity_grant_types = [
+  '1A',
+  '1B',
+  '1C',
+  '1D',
+  '2',
+  'SR',
+  'Fundação'
 ]
 
-cnpq_levels.each do |level|
-  CnpqLevel.create(level: level)
+productivity_grant_types.each do |type|
+  ProductivityGrantType.create(name: type)
 end
 
 ####
@@ -284,7 +288,6 @@ postgraduate_programs = [
   'Interunidades em Biotecnologia',
   'Medicina e Bem-estar Animal',
   'Medicina Tropical',
-  'Medicina Tropical',
   'Medicina Veterinária',
   'Microbiologia',
   'Microbiologia e Imunologia',
@@ -344,7 +347,12 @@ end
 
 #####
 
-ActivityType.create([{ name: 'Institucional' }, { name: 'Cultural' }, { name: 'Inovação' }, { name: 'Translacional' }, { name: 'Prestação de Serviço' }])
+ActivityType.create([
+                      { name: 'Institucional' },
+                      { name: 'Cultural' },
+                      { name: 'Inovação ou Translacional' },
+                      { name: 'Prestação de Serviço' }
+                    ])
 
 #####
 
@@ -454,28 +462,7 @@ cultural_sub_activity_types = [
   'Outra'
 ]
 
-inovacao_sub_activity_types = [
-  'Coordenação de centro de inovação',
-  'Coordenação de desenvolvimento de vacinas',
-  'Coordenação de plataforma de ensaios clínicos',
-  'Coordenação de programa de pós-graduação em inovação',
-  'Coordenação de projeto de inovação',
-  'Coordenação de testes clínicos',
-  'Criação de software ou banco de dados',
-  'Desenvolvimento de processos',
-  'Desenvolvimento de produtos',
-  'Elaboração de solicitação de patente',
-  'Gestão de centro de inovação',
-  'Gestão de projeto de inovação',
-  'Participação em business model canvas',
-  'Participação em desenvolvimento de vacinas',
-  'Participação em palestras e cursos sobre  inovação',
-  'Participação em testes clínicos',
-  'Participação em transferência de tecnologia',
-  'Outra'
-]
-
-translacional_sub_activity_types = [
+inovacao_or_translacional_sub_activity_types = [
   'Coordenação de centro de inovação',
   'Coordenação de desenvolvimento de vacinas',
   'Coordenação de plataforma de ensaios clínicos',
@@ -528,16 +515,12 @@ cultural_sub_activity_types.each do |sub|
   SubActivityType.create(name: sub, activity_type_id: 2)
 end
 
-inovacao_sub_activity_types.each do |sub|
+inovacao_or_translacional_sub_activity_types.each do |sub|
   SubActivityType.create(name: sub, activity_type_id: 3)
 end
 
-translacional_sub_activity_types.each do |sub|
-  SubActivityType.create(name: sub, activity_type_id: 4)
-end
-
 prestacao_sub_activity_types.each do |sub|
-  SubActivityType.create(name: sub, activity_type_id: 5)
+  SubActivityType.create(name: sub, activity_type_id: 4)
 end
 
 #####
@@ -558,3 +541,27 @@ Profile.create(name: 'Pesquisador', description: 'pesquisador', access_level: '1
 Profile.create(name: 'Diretor de Laboratório', description: 'diretor de laboratório', access_level: '2')
 Profile.create(name: 'Diretor de Divisão', description: 'diretor de divisão', access_level: '3')
 Profile.create(name: 'Administrador', description: 'administrador de dados do sistema', access_level: '4')
+
+###
+
+approval_actions = [
+  'Submissão',
+  'Aprovação',
+  'Reprovação'
+]
+
+approval_actions.each do |name|
+  ApprovalAction.create(name: name)
+end
+
+####
+
+grant_currentnesses = [
+  'Novo',
+  'Vigente',
+  'Extensão'
+]
+
+grant_currentnesses.each do |current|
+  GrantCurrentness.create(name: current)
+end

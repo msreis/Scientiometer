@@ -1,9 +1,19 @@
 # frozen_string_literal: true
 
 require 'time'
+require 'current_year'
 
 class InternsController < ApplicationController
-  before_action :set_intern, :authorize_request, only: %i[show update destroy]
+  before_action :authorize_request
+
+  def current_submission
+    if params[:submission]
+      Submission.find(params[:submission])
+    else
+      Submission.find_by(account_id: @current_account[:id],
+                         date: CurrentYear.current_year)
+    end
+  end
 
   # GET /interns
   def index
@@ -42,11 +52,19 @@ class InternsController < ApplicationController
     @intern.destroy
   end
 
+  def postphds
+    degree = AdvisementDegree.find_by(degree: 'Pós-doutorado')
+    advisements = Advisement.where(advisement_degree_id: degree[:id], validity_start: CurrentYear.current_year..DateTime::Infinity.new)
+    ids = advisements.map { |adv| adv[:intern_id] }
+    interns = Intern.where(id: ids, submission_id: current_submission[:id])
+    render json: interns
+  end
+
   def phds
     degree = AdvisementDegree.find_by(degree: 'Doutorado')
     advisements = Advisement.where(advisement_degree_id: degree[:id], validity_start: CurrentYear.current_year..DateTime::Infinity.new)
     ids = advisements.map { |adv| adv[:intern_id] }
-    interns = Intern.where(id: ids)
+    interns = Intern.where(id: ids, submission_id: current_submission[:id])
     render json: interns
   end
 
@@ -54,7 +72,7 @@ class InternsController < ApplicationController
     degree = AdvisementDegree.find_by(degree: 'Mestrado')
     advisements = Advisement.where(advisement_degree_id: degree[:id], validity_start: CurrentYear.current_year..DateTime::Infinity.new)
     ids = advisements.map { |adv| adv[:intern_id] }
-    interns = Intern.where(id: ids)
+    interns = Intern.where(id: ids, submission_id: current_submission[:id])
     render json: interns
   end
 
@@ -62,7 +80,7 @@ class InternsController < ApplicationController
     degree = AdvisementDegree.find_by(degree: 'Iniciação Científica')
     advisements = Advisement.where(advisement_degree_id: degree[:id], validity_start: CurrentYear.current_year..DateTime::Infinity.new)
     ids = advisements.map { |adv| adv[:intern_id] }
-    interns = Intern.where(id: ids)
+    interns = Intern.where(id: ids, submission_id: current_submission[:id])
     render json: interns
   end
 

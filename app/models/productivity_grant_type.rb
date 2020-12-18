@@ -1,0 +1,2 @@
+class ProductivityGrantType < ApplicationRecord
+end

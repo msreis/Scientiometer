@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account: one
+  submission: one
+  approval_action: one
+  comment: MyString
+
+two:
+  account: two
+  submission: two
+  approval_action: two
+  comment: MyString

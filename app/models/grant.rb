@@ -3,4 +3,5 @@ class Grant < ApplicationRecord
   belongs_to :grant_project_type
   belongs_to :grant_participation_type
   belongs_to :funding_agency
+  belongs_to :grant_currentness
 end
