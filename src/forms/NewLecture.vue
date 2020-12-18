@@ -82,7 +82,7 @@
                   >
                     <v-text-field
                       v-model="form_data.workload"
-                      label="Carga Horária Total"
+                      label="Carga Horária Total (horas)"
                       outlined
                       prepend-inner-icon="mdi-clock"
                       :error-messages="errors"
@@ -94,21 +94,23 @@
               <v-row>
                 <v-col>
                   <data-select
-                    v-model="form_data.postgraduate_program_id"
+                    v-model="form_data.postgraduate_program"
                     icon="mdi-script"
-                    label="Programa"
+                    label="Programa (se aplicável)"
                     resource="postgraduate_programs"
                     show-value="name"
+                    object
                   />
                 </v-col>
 
                 <v-col class="col-6">
                   <data-select
-                    v-model="form_data.institution_id"
+                    v-model="form_data.institution"
                     icon="mdi-office-building"
                     label="Instituição"
                     resource="institutions"
                     show-value="name"
+                    object
                   />
                 </v-col>
               </v-row>
@@ -143,9 +145,13 @@ export default {
   data: () => ({
     items: [],
     selected: [],
-    headers: [{ text: 'Nome', value: 'name' },
+    headers: [
+      { text: 'Nome', value: 'name' },
       { text: 'Número de Aulas/Palestras', value: 'lecture_count' },
-      { text: 'Carga Horária Total', value: 'workload' }],
+      { text: 'Carga Horária Total', value: 'workload' },
+      { text: 'Programa', value: 'postgraduate_program_name'},
+      { text: 'Instituição', value: 'institution_name'}
+    ],
     index: 0
   }),
 
@@ -158,11 +164,17 @@ export default {
       if (this.form_data.name &&
         this.form_data.lecture_count &&
         this.form_data.workload &&
-        this.form_data.postgraduate_program_id &&
-        this.form_data.institution_id
+        this.form_data.institution
       ) {
         this.form_data.items = []
-        this.items.push({ index: this.index, ...this.form_data })
+        this.items.push({
+          index: this.index,
+          ...this.form_data,
+          postgraduate_program_id: this.form_data.postgraduate_program ? this.form_data.postgraduate_program.value : '',
+          postgraduate_program_name: this.form_data.postgraduate_program ? this.form_data.postgraduate_program.text : '',
+          institution_id: this.form_data.institution.value,
+          institution_name: this.form_data.institution.text
+        })
         this.form_data.items = this.items
         this.$refs.form.reset()
         this.index++

@@ -104,7 +104,8 @@ export default {
     selected: [],
     headers: [
       { text: 'Nome', value: 'name' },
-      { text: 'Instituição', value: 'institution' }
+      { text: 'Instituição', value: 'institution.text' },
+      { text: 'Nível', value: 'degree.text' }
     ],
     index: 0
   }),

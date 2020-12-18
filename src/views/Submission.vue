@@ -123,7 +123,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      laboratory: 'session/laboratory'
+      laboratory: 'session/laboratory',
+      account: 'session/id'
     })
   },
   data: () => ({
@@ -169,8 +170,13 @@ export default {
     async submit (id) {
       this.dialog = false
       console.log('submetido ' + id + ' ' + this.comment)
-      const response = await axios.post(process.env.VUE_APP_BACKENDURL + /submit/ + id, { comment: this.comment })
+      const response = await axios.post(process.env.VUE_APP_BACKENDURL + /submit/ + id,
+        { comment: this.comment,
+          account: this.account,
+          approval_action: 'Submissão'
+        })
       console.log(response)
+      this.get_items()
     },
     async preview (item) {
     }

@@ -22,7 +22,14 @@
               item-key="index"
               show-select
               @click:row="show_selected"
-            />
+            >
+              <template v-slot:item.validity_start="{ item }">
+                <span>{{get_year(item.validity_start)}}</span>
+              </template>
+              <template v-slot:item.validity_end="{ item }">
+                <span>{{get_year(item.validity_end)}}</span>
+              </template>
+            </v-data-table>
 
             <v-btn
               :color="selected.length == 0 ? '': 'error'"
@@ -41,22 +48,17 @@
             class="ma-4"
           >
             <v-row>
-              <v-col class="col-8">
+              <v-col>
                 <data-select
-                  v-model="form_data.cnpq_level"
+                  v-model="form_data.productivity_grant_type"
                   icon="mdi-poll"
-                  label="Nível de bolsa CNPQ"
-                  resource="cnpq_levels"
-                  show-value="level"
+                  label="Nível CNPQ ou Bolsa Fundação"
+                  resource="productivity_grant_types"
+                  show-value="name"
                   object
                 />
               </v-col>
-              <v-col>
-                <v-checkbox
-                  v-model="form_data.is_fb"
-                  label="Bolsa da Fundação Butantan"
-                />
-              </v-col>
+              <v-col/>
             </v-row>
 
             <v-row>
@@ -128,10 +130,11 @@ export default {
 
   data: () => ({
     form_valid: false,
-    headers: [{
-      text: 'Nível',
-      value: 'cnpq_level.text'
-    }],
+    headers: [
+      { text: 'Nível', value: 'productivity_grant_type.text' },
+      { text: 'Início Vigência', value: 'validity_start' },
+      { text: 'Fim Vigência', value: 'validity_end' },
+    ],
     items: [],
     index: 0,
     selected: []
@@ -152,7 +155,7 @@ export default {
   methods: {
     addToTable () {
       if (
-        this.form_data.cnpq_level &&
+        this.form_data.productivity_grant_type &&
         this.form_data.validity_start &&
         this.form_data.validity_end
       ) {
@@ -176,6 +179,9 @@ export default {
           return item.index !== this.selected[i].index
         })
       }
+    },
+    get_year (date) {
+      return new DateTime.fromISO(date).toFormat('y')
     }
   }
 }

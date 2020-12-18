@@ -77,21 +77,23 @@
               <v-row>
                 <v-col>
                   <data-select
-                    v-model="form_data.postgraduate_program_id"
+                    v-model="form_data.postgraduate_program"
                     icon="mdi-script"
                     label="Programa"
                     resource="postgraduate_programs"
                     show-value="name"
+                    object
                   />
                 </v-col>
 
                 <v-col class="col-4">
                   <data-select
-                    v-model="form_data.institution_id"
+                    v-model="form_data.institution"
                     icon="mdi-office-building"
                     label="Instituição"
                     resource="institutions"
                     show-value="name"
+                    object
                   />
                 </v-col>
               </v-row>
@@ -125,7 +127,12 @@ export default {
   data: () => ({
     items: [],
     selected: [],
-    headers: [{ text: 'Nome', value: 'name' }],
+    headers: [
+      { text: 'Nome', value: 'name' },
+      { text: 'Código', value: 'code' },
+      { text: 'Programa', value: 'postgraduate_program_name'},
+      { text: 'Instituição', value: 'institution_name'}
+    ],
     index: 0
   }),
 
@@ -137,11 +144,18 @@ export default {
     addToTable () {
       if (this.form_data.name &&
         this.form_data.code &&
-        this.form_data.postgraduate_program_id &&
-        this.form_data.institution_id
+        this.form_data.postgraduate_program &&
+        this.form_data.institution
       ) {
         this.form_data.items = []
-        this.items.push({ index: this.index, ...this.form_data })
+        this.items.push({
+          index: this.index,
+          ...this.form_data,
+          postgraduate_program_id: this.form_data.postgraduate_program.value,
+          postgraduate_program_name: this.form_data.postgraduate_program.text,
+          institution_id: this.form_data.institution.value,
+          institution_name: this.form_data.institution.text
+        })
         this.form_data.items = this.items
         this.$refs.form.reset()
         this.index++

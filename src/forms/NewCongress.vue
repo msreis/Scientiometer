@@ -100,10 +100,16 @@ export default {
     DataSelect
   },
 
+  props: ['form_data'],
+
   data: () => ({
     items: [],
     selected: [],
-    headers: [{ text: 'Nome', value: 'name' }, { text: 'Participação', value: 'role' }],
+    headers: [
+      { text: 'Nome', value: 'name' },
+      { text: 'Participação', value: 'role' },
+      { text: 'País', value: 'country' }
+    ],
     form_data: {},
     index: 0
   }),
@@ -118,10 +124,15 @@ export default {
         this.form_data.country &&
         this.form_data.congress_role_obj) {
         this.form_data['items'] = null
-        this.items.push({ index: this.index, ...this.form_data, role: this.form_data.congress_role_obj.text })
+        this.items.push({
+          index: this.index,
+          ...this.form_data,
+          role: this.form_data.congress_role_obj.text,
+          congress_role_id: this.form_data.congress_role_obj.value })
         this.$refs.form.reset()
         this.index++
       }
+      this.form_data['items'] = this.items
     },
     removeSelected () {
       for (let i = 0; i < this.selected.length; i++) {

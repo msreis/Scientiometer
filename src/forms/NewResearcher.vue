@@ -38,8 +38,9 @@
               <data-select
                 v-model="form_data.role_foundation_level_id"
                 icon="mdi-account-badge"
-                label="Nível PQ ou Cargo Fundação"
+                label="Nível PQ"
                 resource="role_foundation_levels"
+                params="categories=pesquisador"
                 show-value="description"
                 rules="required"
               />
@@ -47,8 +48,9 @@
               <data-select
                 v-model="form_data.title_id"
                 icon="mdi-certificate"
-                label="Título"
+                label="Titulação"
                 resource="titles"
+                params="is_researcher=true"
                 show-value="name"
                 rules="required"
               />
@@ -71,34 +73,21 @@
                 rules="required"
               />
 
-              <ValidationProvider
-                v-slot="{ errors, valid }"
-                rules="required"
-              >
-                <v-text-field
-                  v-model="form_data.researcher_id"
-                  label="Researcher ID"
-                  outlined
-                  prepend-inner-icon="mdi-numeric"
-                  :error-messages="errors"
-                  :success="valid"
-                />
-              </ValidationProvider>
+              <v-text-field
+                v-model="form_data.researcher_id"
+                v-mask="`A-####-####`"
+                label="Researcher ID"
+                outlined
+                prepend-inner-icon="mdi-numeric"
+              />
 
-              <ValidationProvider
-                v-slot="{ errors, valid }"
-                rules="required"
-              >
-                <v-text-field
-                  v-model="form_data.orcid"
-                  v-mask="`####-####-####-###X`"
-                  label="ORCID"
-                  outlined
-                  prepend-inner-icon="mdi-numeric"
-                  :error-messages="errors"
-                  :success="valid"
-                />
-              </ValidationProvider>
+              <v-text-field
+                v-model="form_data.orcid"
+                v-mask="`####-####-####-###X`"
+                label="ORCID"
+                outlined
+                prepend-inner-icon="mdi-numeric"
+              />
 
               <ValidationProvider
                 v-slot="{ errors, valid }"

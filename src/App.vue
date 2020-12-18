@@ -111,8 +111,7 @@ export default {
       { icon: 'mdi-playlist-star', text: 'Minhas Submissões', route: '/my_submissions', if: 'logged_in' },
       { icon: 'mdi-playlist-edit', text: 'Submissões', route: '/review', if: 'access_level == 2 || access_level == 4' },
       { icon: 'mdi-playlist-check', text: 'Sumário de Submissões', route: '/summary', if: 'access_level >= 3' },
-      { icon: 'mdi-ballot', text: 'Preencher', route: '/fill', if: 'logged_in' },
-      { icon: 'mdi-chart-bar', text: 'Dashboard', route: '/dashboard', if: 'logged_in' }
+      { icon: 'mdi-ballot', text: 'Preencher', route: '/fill', if: 'logged_in' }
     ]
   }),
   methods: {

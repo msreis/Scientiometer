@@ -32,11 +32,12 @@
         <v-row>
           <v-col>
             <data-select
-              v-model="formData.funding_agency_id"
+              v-model="formData.funding_agency"
               icon="mdi-office-building"
               label="Agência"
               resource="funding_agencies"
               show-value="name"
+              object
             />
           </v-col>
 
@@ -73,7 +74,9 @@
             />
           </v-col>
         </v-row>
-
+        Vencimentos e reserva gasta referentes apenas a 2019.<br>
+        Se bolsa acabou antes de 2019, deixar com 0s.
+        <br>
         <v-row>
           <v-col>
             <validation-provider
@@ -148,13 +151,18 @@ export default {
     YearPicker
   },
 
-  props: { formData: { default: () => ({}) } },
+  props: { formData: { default: () => ({
+        value_BRL: 0,
+        value_USD: 0,
+        technical_reserve_BRL: 0
+      }) } },
 
   data: () => ({
     items: [],
     selected: [],
     headers: [
       { text: 'Processo', value: 'process_number' },
+      { text: 'Agência', value: 'funding_agency_name' },
       { text: 'Início Vigência', value: 'validity_start' },
       { text: 'Fim Vigência', value: 'validity_end' },
       { text: 'Valor BRL', value: 'value_BRL' },
@@ -193,15 +201,19 @@ export default {
     addToTable () {
       if (
         this.formData.process_number &&
-        this.formData.value_BRL &&
-        this.formData.value_USD &&
+        this.formData.value_BRL >= 0 &&
+        this.formData.value_USD >= 0 &&
         this.formData.validity_start &&
         this.formData.validity_end &&
-        this.formData.funding_agency_id &&
-        this.formData.technical_reserve_BRL
+        this.formData.funding_agency &&
+        this.formData.technical_reserve_BRL >= 0
       ) {
         this.formData['items'] = null
-        this.items.push({ index: this.index, ...this.formData })
+        this.items.push({
+          index: this.index,
+          ...this.formData,
+          funding_agency_id: this.formData.funding_agency.value,
+          funding_agency_name: this.formData.funding_agency.text })
         this.$refs.form.reset()
         this.index++
       }

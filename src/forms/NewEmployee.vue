@@ -9,7 +9,7 @@
       >
         <v-card outlined>
           <v-card-title headline>
-            Funcionários {{ this.propObj ? "Fundação" : "Estatutários" }}
+            Funcionários {{ this.propObj ? "Fundação" : "Servidores" }}
           </v-card-title>
 
           <v-card class="ma-4">
@@ -48,20 +48,23 @@
             />
 
             <data-select
-              v-model="form_data.role_foundation_level_id"
+              v-model="form_data.role_foundation_level"
               icon="mdi-account-badge"
-              label="Nível PQ ou Cargo Fundação"
+              :label="this.label"
               resource="role_foundation_levels"
+              :params="this.resource"
               show-value="description"
+              object
             />
 
             <data-select
               ref="title_select"
-              v-model="form_data.title_id"
+              v-model="form_data.title"
               icon="mdi-certificate"
-              label="Título"
+              label="Titulação"
               resource="titles"
               show-value="name"
+              object
             />
 
             <v-btn @click="addToTable()">
@@ -90,7 +93,11 @@ export default {
   },
   data: () => ({
     form_valid: false,
-    headers: [{ text: 'Nome', value: 'name' }],
+    headers: [
+      { text: 'Nome', value: 'name' },
+      { text: 'Cargo', value: 'role_foundation_level_description' },
+      { text: 'Titulação', value: 'title_name' }
+    ],
     items: [],
     index: 0,
     selected: []
@@ -98,6 +105,12 @@ export default {
   computed: {
     access_level () {
       return this.$store.state.session.access_level > 1
+    },
+    resource () {
+      return  this.propObj ? "categories=fundação" : "categories=estatutário"
+    },
+    label () {
+      return  this.propObj ? "Cargo Fundação" : "Cargo Servidor"
     }
   },
 
@@ -108,11 +121,17 @@ export default {
     addToTable () {
       if (
         this.form_data.name &&
-        this.form_data.role_foundation_level_id &&
-        this.form_data.title_id
+        this.form_data.role_foundation_level &&
+        this.form_data.title
       ) {
         this.form_data['items'] = null
-        this.items.push({ index: this.index, ...this.form_data })
+        this.items.push({
+          index: this.index,
+          ...this.form_data,
+          role_foundation_level_id: this.form_data.role_foundation_level.value,
+          role_foundation_level_description: this.form_data.role_foundation_level.text,
+          title_id: this.form_data.title.value,
+          title_name: this.form_data.title.text })
         this.$refs.form.reset()
         this.index++
       }

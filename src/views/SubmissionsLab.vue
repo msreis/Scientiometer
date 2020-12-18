@@ -140,6 +140,7 @@ export default {
     ],
     items: [],
     laboratory: store.state.session.laboratory,
+    account: store.state.session.id,
     loading: false,
     editedItem: {},
     mode: '',
@@ -204,19 +205,28 @@ export default {
         case 'reprove': this.reprove(id)
           break
       }
-      this.$router.push('/review')
     },
 
     async approve (id) {
       console.log('aprovado ' + id + ' ' + this.comment)
-      const response = await axios.post(process.env.VUE_APP_BACKENDURL + /accept/ + id, { comment: this.comment })
+      const response = await axios.post(process.env.VUE_APP_BACKENDURL + /accept/ + id,
+        { comment: this.comment,
+          account: this.account,
+          approval_action: 'Aprovação'
+        })
       console.log(response)
+      this.get_items()
     },
 
     async reprove (id) {
       await console.log('reprovado ' + id + ' ' + this.comment)
-      const response = await axios.post(process.env.VUE_APP_BACKENDURL + /reprove/ + id, { comment: this.comment })
+      const response = await axios.post(process.env.VUE_APP_BACKENDURL + /reprove/ + id,
+        { comment: this.comment,
+          account: this.account,
+          approval_action: 'Reprovação'
+        })
       console.log(response)
+      this.get_items()
     }
   }
 }

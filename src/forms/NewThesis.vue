@@ -9,7 +9,7 @@
       >
         <v-card outlined>
           <v-card-title headline>
-            Teses, dissertações, TCCs e supervisões de pós-doc finalizados em {{ curr_year }}
+            Teses, dissertações e TCCs
           </v-card-title>
 
           <v-card class="ma-4">
@@ -57,6 +57,7 @@
                     label="Data de entrega/apresentação"
                     outlined
                     prepend-inner-icon="mdi-calendar"
+                    disabled
                   />
                 </v-col>
                 <v-col>
@@ -109,17 +110,11 @@ export default {
     selected: [],
     headers: [
       { text: 'Aluno', value: 'name' },
-      { text: 'Instituição', value: 'institution' },
+      { text: 'Instituição', value: 'institution.text' },
       { text: 'Entrega/apresentação', value: 'delivery_date' }
     ],
     index: 0
   }),
-
-  computed: {
-    curr_year () {
-      return DateTime.local().toFormat('y')
-    }
-  },
 
   mounted () {
     this.items = this.form_data.items || []

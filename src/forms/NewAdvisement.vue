@@ -20,10 +20,27 @@
               :headers="headers"
               :items="items"
               hide-default-footer
-              item-key="index"
+              item-key="name"
               show-select
-            />
-
+              show-expand
+            >
+              <template v-slot:expanded-item="{ headers, item }">
+                <td :colspan="headers_scholarship.length">
+                  <v-data-table
+                    :headers="headers_scholarship"
+                    :items="item.scholarships"
+                    hide-default-footer
+                  >
+                    <template v-slot:item.validity_start="{ item }">
+                      <span>{{get_year(item.validity_start)}}</span>
+                    </template>
+                    <template v-slot:item.validity_end="{ item }">
+                      <span>{{get_year(item.validity_end)}}</span>
+                    </template>
+                  </v-data-table>
+                </td>
+              </template>
+            </v-data-table>
             <v-btn
               :color="selected.length == 0 ? '': 'error'"
               :disabled="items.length == 0"
@@ -113,13 +130,12 @@
                   />
                 </v-col>
                 <v-col>
-                  <data-select
-                    v-model="form_data.postdoc_id"
+                  <v-text-field
+                    v-model="postdoc_name"
                     icon="mdi-teach"
                     label="Orientador Pósdoc"
-                    resource="postdocs"
-                    show-value="name"
                     :disabled="!postdoc"
+                    outlined
                   />
                 </v-col>
               </v-row>
@@ -165,10 +181,20 @@ export default {
       { text: 'Nível', value: 'advisement_degree.text' },
       { text: 'Bolsas', value: 'nScholarships' }
     ],
+    headers_scholarship: [
+      { text: 'Processo', value: 'process_number' },
+      { text: 'Agência', value: 'funding_agency_name' },
+      { text: 'Início Vigência', value: 'validity_start' },
+      { text: 'Fim Vigência', value: 'validity_end' },
+      { text: 'Valor BRL', value: 'value_BRL' },
+      { text: 'Valor USD', value: 'value_USD' },
+      { text: 'Reserva Técnica', value: 'technical_reserve_BRL' }
+    ],
     index: 0,
     has_scholarship: [],
     zero: 0,
-    postdoc: false
+    postdoc: false,
+    postdoc_name: ''
   }),
 
   computed: {
@@ -204,7 +230,8 @@ export default {
           index: this.index,
           ...this.form_data,
           nScholarships: this.form_data.scholarships.length,
-          postdoc: this.postdoc
+          postdoc: this.postdoc,
+          postdoc_name: this.postdoc_name
         })
         this.form_data.items = this.items
         this.$refs.form.reset()
@@ -218,6 +245,9 @@ export default {
           return item.index !== this.selected[i].index
         })
       }
+    },
+    get_year (date) {
+      return new DateTime.fromISO(date).toFormat('y')
     }
   }
 }

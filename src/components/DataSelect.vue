@@ -38,7 +38,7 @@ export default {
     ValidationProvider
   },
 
-  props: { 'value': {}, 'resource': {}, 'label': {}, 'showValue': {}, 'icon': {}, 'object': { default: () => false }, 'rules': { default: 'required' } },
+  props: { 'value': {}, 'resource': {}, 'params': {}, 'label': {}, 'showValue': {}, 'icon': {}, 'object': { default: () => false }, 'rules': { default: 'required' } },
 
   data: () => ({
     selected: null,
@@ -60,6 +60,12 @@ export default {
     this.getData()
   },
 
+  computed: {
+    urlParams() {
+      return this.params ? '?' + this.params : ''
+    }
+  },
+
   methods: {
     async getData () {
       console.log('getting data')
@@ -68,7 +74,7 @@ export default {
       this.message = 'Carregando dados...'
 
       const response = await axios.get(
-        process.env.VUE_APP_BACKENDURL + '/' + this.resource
+        process.env.VUE_APP_BACKENDURL + '/' + this.resource + this.urlParams
       )
 
       if (response) {

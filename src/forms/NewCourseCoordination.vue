@@ -58,14 +58,14 @@
                     />
                   </validation-provider>
                 </v-col>
-                <v-col class="col-3">
+                <v-col class="col-4">
                   <validation-provider
                     v-slot="{ errors, valid }"
                     rules="required|numeric"
                   >
                     <v-text-field
                       v-model="form_data.workload"
-                      label="Carga Horária Total"
+                      label="Carga Horária Total (em horas)"
                       outlined
                       prepend-inner-icon="mdi-clock"
                       :error-messages="errors"
@@ -77,21 +77,23 @@
               <v-row>
                 <v-col>
                   <data-select
-                    v-model="form_data.course_classification_id"
+                    v-model="form_data.course_classification"
                     icon="mdi-poll"
                     label="Classificação"
                     resource="course_classifications"
                     show-value="classification"
+                    object
                   />
                 </v-col>
 
                 <v-col class="col-6">
                   <data-select
-                    v-model="form_data.coordination_degree_id"
+                    v-model="form_data.coordination_degree"
                     icon="mdi-office-building"
                     label="Nível do Curso"
                     resource="coordination_degrees"
                     show-value="degree"
+                    object
                   />
                 </v-col>
               </v-row>
@@ -126,7 +128,12 @@ export default {
   data: () => ({
     items: [],
     selected: [],
-    headers: [{ text: 'Nome', value: 'name' }, { text: 'Carga Horária Total', value: 'workload' }],
+    headers: [
+      { text: 'Nome', value: 'name' },
+      { text: 'Carga Horária Total', value: 'workload' },
+      { text: 'Classificação', value: 'course_classification_classification' },
+      { text: 'Nível', value: 'coordination_degree_degree' }
+    ],
     index: 0
   }),
 
@@ -138,11 +145,18 @@ export default {
     addToTable () {
       if (this.form_data.name &&
         this.form_data.workload &&
-        this.form_data.course_classification_id &&
-        this.form_data.coordination_degree_id
+        this.form_data.course_classification &&
+        this.form_data.coordination_degree
       ) {
         this.form_data.items = []
-        this.items.push({ index: this.index, ...this.form_data })
+        this.items.push({
+          index: this.index,
+          ...this.form_data,
+          course_classification_id: this.form_data.course_classification.value,
+          course_classification_classification: this.form_data.course_classification.text,
+          coordination_degree_id: this.form_data.coordination_degree.value,
+          coordination_degree_degree: this.form_data.coordination_degree.text
+        })
         this.form_data.items = this.items
         this.$refs.form.reset()
         this.index++

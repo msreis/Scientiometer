@@ -99,7 +99,6 @@ import NewMinisteredClass from '../forms/NewMinisteredClass.vue'
 import NewLecture from '../forms/NewLecture.vue'
 import NewCourseCoordination from '../forms/NewCourseCoordination.vue'
 import NewGrant from '../forms/NewGrant.vue'
-import NewGrantExtension from '../forms/NewGrantExtension.vue'
 import NewThesis from '../forms/NewThesis.vue'
 import NewBook from '../forms/NewBook.vue'
 
@@ -142,7 +141,7 @@ export default {
       {
         index: 5,
         label: 'Captação',
-        components: [NewGrant, NewGrantExtension]
+        components: [NewGrant]
       },
       { index: 6, label: 'Atividades', components: [NewActivity] },
       { index: 7, label: 'Observações', components: [NewNote] }
@@ -181,6 +180,10 @@ export default {
           : 'white'
       }
     }
+  },
+
+  beforeMount () {
+    this.$store.commit('general/step', 1)
   },
 
   methods: {

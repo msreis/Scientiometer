@@ -18,10 +18,20 @@
               :headers="headers"
               :items="items"
               hide-default-footer
-              item-key="index"
+              item-key="doi"
               show-select
-            />
-
+              show-expand
+            >
+              <template v-slot:expanded-item="{ headers, item }">
+                <td :colspan="headers.length">
+                  <v-data-table
+                    :headers="[{text: 'Nome', value: 'text'}]"
+                    :items="[].concat(item.ic, item.msc, item.phd, item.postdoc)"
+                    hide-default-footer
+                  />
+                </td>
+              </template>
+            </v-data-table>
             <v-btn
               :color="selected.length == 0 ? '': 'error'"
               :disabled="items.length == 0"
@@ -137,7 +147,7 @@
                 v-model="form_data.postdoc"
                 icon="mdi-certificate"
                 label="Participação de Pós-doc"
-                resource="postdocs"
+                resource="postphds"
                 show-value="name"
                 item-key="value"
                 hide-selected

@@ -43,11 +43,6 @@ export default new Router({
       component: () => import(/* webpackChunkName: "summary" */ './views/SubmissionsDiv.vue')
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: () => import(/* webpackChunkName: "dashboard" */ './views/Dashboard.vue')
-    },
-    {
       path: '/profile',
       name: 'profile',
       component: () => import(/* webpackChunkName: "profile" */ './views/Profile.vue')

@@ -42,28 +42,30 @@
               lazy-validation
               class="ma-4"
             >
-              <validation-provider
-                v-slot="{ errors, valid }"
-                rules="required"
-              >
-                <v-text-field
-                  v-model="form_data.description"
-                  label="Atividade"
-                  outlined
-                  prepend-inner-icon="mdi-account-details"
-                  :error-messages="errors"
-                  :success="valid"
-                />
-              </validation-provider>
+              <v-row>
+                <v-col>
+                  <data-select
+                    v-model="form_data.activity_type"
+                    icon="mdi-presentation"
+                    label="Atividade"
+                    resource="activity_types"
+                    show-value="name"
+                    object
+                  />
+                </v-col>
+              </v-row>
 
               <v-row>
                 <v-col>
                   <data-select
-                    v-model="form_data.activity_type_id"
+                    v-model="form_data.sub_activity_type"
+                    :disabled="!form_data.activity_type"
                     icon="mdi-presentation"
-                    label="Tipo de Atividade"
-                    resource="activity_types"
+                    label="Subtipo Atividade"
+                    resource="sub_activity_types"
                     show-value="name"
+                    :params="sub_activity_param"
+                    object
                   />
                 </v-col>
               </v-row>
@@ -134,9 +136,18 @@ export default {
   data: () => ({
     items: [],
     selected: [],
-    headers: [{ text: 'Atividade', value: 'description' }, { text: 'Carga Horária Total', value: 'workload' }],
+    headers: [
+      { text: 'Atividade', value: 'activity_type_name' },
+      { text: 'Subtipo', value: 'sub_activity_type_name' },
+      { text: 'Carga Horária Total', value: 'workload' }],
     index: 0
   }),
+
+  computed: {
+    sub_activity_param () {
+      return this.form_data.activity_type ? 'activity_type_id=' + this.form_data.activity_type.value : ''
+    }
+  },
 
   mounted () {
     this.items = this.form_data.items || []
@@ -144,13 +155,21 @@ export default {
 
   methods: {
     addToTable () {
-      if (this.form_data.description &&
+      if (
         this.form_data.workload &&
-        this.form_data.activity_type_id &&
+        this.form_data.activity_type &&
+        this.form_data.sub_activity_type &&
         this.form_data.duration
       ) {
         this.form_data['items'] = null
-        this.items.push({ index: this.index, ...this.form_data })
+        this.items.push({
+          index: this.index,
+          ...this.form_data,
+          activity_type_id: this.form_data.activity_type.value,
+          activity_type_name: this.form_data.activity_type.text,
+          sub_activity_type_id: this.form_data.sub_activity_type.value,
+          sub_activity_type_name: this.form_data.sub_activity_type.text
+        })
         this.form_data['items'] = this.items
         this.$refs.form.reset()
         this.index++

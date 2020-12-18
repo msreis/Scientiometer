@@ -9,7 +9,7 @@
       >
         <v-card outlined>
           <v-card-title headline>
-            Novo Auxílio Outorgado em {{ curr_year }}
+            Auxílios
           </v-card-title>
 
           <v-card class="ma-4">
@@ -21,7 +21,11 @@
               hide-default-footer
               item-key="index"
               show-select
-            />
+            >
+              <template v-slot:item.validity_start="{ item }">
+                <span>{{ get_year(item.validity_start) + '-' + get_year(item.validity_end) }}</span>
+              </template>
+            </v-data-table>
 
             <v-btn
               :color="selected.length == 0 ? '': 'error'"
@@ -45,21 +49,23 @@
               <v-row>
                 <v-col>
                   <data-select
-                    v-model="form_data.grant_project_type_id"
+                    v-model="form_data.grant_project_type"
                     icon="mdi-briefcase"
                     label="Tipo de Projeto"
                     resource="grant_project_types"
                     show-value="name"
+                    object
                   />
                 </v-col>
 
                 <v-col>
                   <data-select
-                    v-model="form_data.grant_participation_type_id"
+                    v-model="form_data.grant_participation_type"
                     icon="mdi-format-list-bulleted-type"
                     label="Tipo de Participação"
                     resource="grant_participation_types"
                     show-value="name"
+                    object
                   />
                 </v-col>
               </v-row>
@@ -67,11 +73,12 @@
               <v-row>
                 <v-col>
                   <data-select
-                    v-model="form_data.funding_agency_id"
+                    v-model="form_data.funding_agency"
                     icon="mdi-office-building"
                     label="Agência"
                     resource="funding_agencies"
                     show-value="name"
+                    object
                   />
                 </v-col>
 
@@ -89,6 +96,22 @@
                       :success="valid"
                     />
                   </validation-provider>
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col>
+                  <data-select
+                    v-model="form_data.grant_currentness"
+                    icon="mdi-format-list-bulleted-type"
+                    label="Tipo de Vigência"
+                    resource="grant_currentnesses"
+                    show-value="name"
+                    object
+                  />
+                </v-col>
+
+                <v-col>
                 </v-col>
               </v-row>
 
@@ -180,8 +203,11 @@ export default {
     selected: [],
     headers: [
       { text: 'Processo', value: 'process_number' },
-      { text: 'Início Vigência', value: 'validity_start' },
-      { text: 'Fim Vigência', value: 'validity_end' },
+      { text: 'Projeto', value: 'grant_project_type_name' },
+      { text: 'Participação', value: 'grant_participation_type_name' },
+      { text: 'Tipo', value: 'grant_currentness_name' },
+      { text: 'Agência', value: 'funding_agency_name' },
+      { text: 'Vigência', value: 'validity_start' },
       { text: 'Valor BRL', value: 'value_brl' },
       { text: 'Valor USD', value: 'value_usd' }
     ],
@@ -189,9 +215,6 @@ export default {
   }),
 
   computed: {
-    curr_year () {
-      return DateTime.local().toFormat('y')
-    },
     max_end_date () {
       return DateTime.local()
         .plus({ years: 30 })
@@ -216,12 +239,24 @@ export default {
         this.form_data.value_usd &&
         this.form_data.validity_start &&
         this.form_data.validity_end &&
-        this.form_data.funding_agency_id &&
-        this.form_data.grant_project_type_id &&
-        this.form_data.grant_participation_type_id
+        this.form_data.funding_agency &&
+        this.form_data.grant_project_type &&
+        this.form_data.grant_participation_type &&
+        this.form_data.grant_currentness
       ) {
         this.form_data['items'] = null
-        this.items.push({ index: this.index, ...this.form_data })
+        this.items.push({
+          index: this.index,
+          ...this.form_data,
+          grant_project_type_id: this.form_data.grant_project_type.value,
+          grant_project_type_name: this.form_data.grant_project_type.text,
+          grant_participation_type_id: this.form_data.grant_participation_type.value,
+          grant_participation_type_name: this.form_data.grant_participation_type.text,
+          funding_agency_id: this.form_data.funding_agency.value,
+          funding_agency_name: this.form_data.funding_agency.text,
+          grant_currentness_id: this.form_data.grant_currentness.value,
+          grant_currentness_name: this.form_data.grant_currentness.text
+        })
         this.form_data['items'] = this.items
         this.$refs.form.reset()
         this.index++
@@ -233,6 +268,9 @@ export default {
           return item.index !== this.selected[i].index
         })
       }
+    },
+    get_year (date) {
+      return new DateTime.fromISO(date).toFormat('y')
     }
   }
 }
