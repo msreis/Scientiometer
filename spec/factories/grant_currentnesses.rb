@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :grant_currentness do
-    status { "MyString" }
+    name { 'Novo' }
   end
 end
